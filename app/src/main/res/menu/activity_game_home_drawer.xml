@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Home" />
+        <item
+            android:id="@+id/winnings"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Winnings" />
+        <item
+            android:id="@+id/transactions"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Transactions" />
+
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+</menu>
