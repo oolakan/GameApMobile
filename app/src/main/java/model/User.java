@@ -9,7 +9,7 @@ import utils.Constants;
  * Created by HighStrit on 23/11/2016.
  */
 
-public class Customer {
+public class User {
     private String customer_name, customer_email, customer_id, customer_phone_no;
     private JSONObject jsonObject;
     private String password, repeated_password;
@@ -22,20 +22,24 @@ public class Customer {
         this.jsonObject = jsonObject;
     }
 
-    public String getCustomer_name() throws JSONException{
-        return getJsonObject().getString(Constants.CUSTOMER_NAME);
+    public String getUser_name() throws JSONException{
+        return getJsonObject().getString(Constants.USER_NAME);
     }
 
-    public String getCustomer_email() throws JSONException{
-        return getJsonObject().getString(Constants.CUSTOMER_EMAIL);
+    public String getUser_email() throws JSONException{
+        return getJsonObject().getString(Constants.USER_EMAIL);
     }
 
-    public String getCustomer_id() throws JSONException{
-        return getJsonObject().getString(Constants.CUSTOMER_ID);
+    public String getUser_id() throws JSONException{
+        return getJsonObject().getString(Constants.ID);
     }
 
-    public String getCustomer_phone_no() throws JSONException{
-        return getJsonObject().getString(Constants.CUSTOMER_PHONE_NO);
+    public String getUser_phone_no() throws JSONException{
+        return getJsonObject().getString(Constants.USER_PHONE_NO);
+    }
+
+    public String getUserLocation() throws JSONException{
+        return getJsonObject().getString(Constants.USER_ADDRESS);
     }
 
     public boolean validatePassword(String password, String repeated_password){

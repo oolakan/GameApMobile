@@ -392,7 +392,28 @@
         <item>263,ZW</item>
     </string-array>
     <string name="title_activity_game_home">GameHomeActivity</string>
-    <string name="start_game">Select Game Optio</string>
-    <string name="select_game_option">Select Game</string>
+    <string name="select_game">Select Game Option</string>
+    <string name="start_game">Start game</string>
+    <string name="select_game_option">Select the game to play</string>
     <string name="title_activity_selected_game">SelectedGameActivity</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="enter_email">Enter email address</string>
+    <string name="enter_location">Enter your location</string>
+    <string name="select_game_name">Select game name</string>
+    <string name="select_game_type_option">Select game type option</string>
+    <string name="select_game_type">Select game type</string>
+    <string name="select_game_tname">Select game name</string>
+    <string name="select_game_quaters">Select game time</string>
+    <string name="lines">Lines</string>
+    <string name="unit_stake">Unit Stake</string>
+    <string name="amount">Amount</string>
+    <string name="play_more">Play More Game</string>
+    <string name="pay">Proceed to pay</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="game_not_found">select game name</string>
+    <string name="game_type_not_found">Select game type</string>
+    <string name="game_type_option_not_found">select game type option</string>
+    <string name="game_qaters">Select game time</string>
+    <string name="dialog_title">Message</string>
+    <string name="ok">Ok</string>
 </resources>

@@ -4,25 +4,48 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Home" />
+            android:icon="@drawable/game"
+            android:title="Play Game" />
+
         <item
             android:id="@+id/winnings"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/winnings"
             android:title="Winnings" />
+
         <item
             android:id="@+id/transactions"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Transactions" />
+            android:icon="@drawable/transaction"
+            android:title="Validate Tickets" />
+
+        <item
+            android:id="@+id/reports"
+            android:icon="@drawable/reports"
+            android:title="Reports" />
+
+        <item
+            android:id="@+id/sales"
+            android:icon="@drawable/sales"
+            android:title="Sales" />
+
+        <item
+            android:id="@+id/credits"
+            android:icon="@drawable/credits"
+            android:title="Credits" />
 
     </group>
 
     <item android:title="">
         <menu>
             <item
+                android:id="@+id/settings"
+                android:icon="@drawable/settings"
+                android:title="Settings" />
+
+            <item
                 android:id="@+id/logout"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Logout" />
+
         </menu>
     </item>
 

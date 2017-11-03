@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,4 +8,149 @@
     tools:context="com.example.mygame.mygame.game.SelectedGameActivity"
     tools:showIn="@layout/activity_selected_game">
 
-</android.support.constraint.ConstraintLayout>
+    <GridView
+        android:id="@+id/game_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:horizontalSpacing="1dp"
+        android:numColumns="10"
+        android:verticalSpacing="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/layout"/>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:typeface="normal"
+                android:text="@string/lines"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/primaryDark"
+                android:paddingLeft="10dp"
+                android:layout_weight="7.5"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"/>
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="40dp"
+               android:id="@+id/lines"
+               android:textColor="@color/primaryDark"
+               android:layout_gravity="center"
+               android:gravity="start|center"
+               android:layout_weight="3.5"
+               android:textSize="17sp"
+               android:hint="@string/lines"
+               android:layout_marginLeft="10dp"
+               android:paddingLeft="20dp"
+               android:focusable="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:typeface="normal"
+                android:text="@string/unit_stake"
+                android:textColor="@color/primaryDark"
+                android:paddingLeft="10dp"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_weight="7.5"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/unit_stake"
+                android:textColor="@color/primaryDark"
+                android:layout_gravity="center"
+                android:gravity="start|center"
+                android:layout_weight="3.5"
+                android:textSize="17sp"
+                android:inputType="number"
+                android:hint="@string/unit_stake"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="20dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:typeface="normal"
+                android:text="@string/amount"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/primaryDark"
+                android:paddingLeft="10dp"
+                android:layout_weight="7.5"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/game_amount"
+                android:textColor="@color/primaryDark"
+                android:layout_gravity="center"
+                android:gravity="start|center"
+                android:layout_weight="3.5"
+                android:textSize="17sp"
+                android:hint="@string/amount"
+                android:inputType="numberDecimal"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="20dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/playNewGame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:typeface="normal"
+                android:text="@string/play_more"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:background="@drawable/background_black"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:textSize="17sp"
+                android:gravity="center"/>
+            <Button
+                android:id="@+id/proceedToPlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:typeface="normal"
+                android:text="@string/pay"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:textSize="17sp"
+                android:textAllCaps="false"
+                android:background="@drawable/background_black"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

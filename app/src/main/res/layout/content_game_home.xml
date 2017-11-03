@@ -7,57 +7,81 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.mygame.mygame.game.GameHomeActivity"
     tools:showIn="@layout/app_bar_game_home">
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:max="100"
+        android:visibility="gone"
+        android:backgroundTint="@color/primaryDark"
+        android:indeterminateTint="@color/colorPrimary"
+        android:layout_marginTop="-3dp"/>
     <LinearLayout
         android:id="@+id/lay_scrol"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="5dp"
-        android:background="@color/grey"
-        >
+        android:layout_margin="10dp">
 
         <TextView
             android:layout_marginTop="50dp"
-            android:textStyle="bold"
-            android:textSize="25sp"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/white"
+            android:textStyle="normal"
+            android:textSize="21sp"
+            android:textColor="@color/black"
             android:text="@string/select_game_option"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+            android:layout_height="45dp"
+            android:typeface="normal"
+            android:layout_gravity="start|center"
+            android:gravity="start|center"/>
 
         <Spinner
             android:id="@+id/game_name"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="45dp"
+            android:spinnerMode="dialog"
+            android:layout_marginTop="10dp"
+            android:background="@color/gray1">
 
         </Spinner>
 
         <Spinner
             android:id="@+id/game_type"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dialog"
+            android:background="@color/gray1">
 
         </Spinner>
 
         <Spinner
             android:id="@+id/game_type_option"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dialog"
+            android:background="@color/gray1">
+
+        </Spinner>
+
+        <Spinner
+            android:id="@+id/game_quaters"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dialog"
+            android:background="@color/gray1">
 
         </Spinner>
 
         <Button
-            android:id="@+id/sign_in_button"
+            android:id="@+id/start_game"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_in_button_title"
+            android:text="@string/start_game"
             android:layout_gravity="center"
             android:textSize="20sp"
             android:textAllCaps="true"
@@ -65,10 +89,8 @@
             android:textStyle="bold"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/black"
-            android:background="@drawable/background_cornered_green" />
+            android:textColor="@color/white"
+            android:background="@drawable/background_black" />
 
     </LinearLayout>
 

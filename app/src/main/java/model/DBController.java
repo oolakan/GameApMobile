@@ -12,24 +12,28 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import utils.Constants;
-import model.Customer;
 
 public class DBController extends SQLiteOpenHelper{
     public DBController(Context applicationcontext) {
-        super(applicationcontext, "jasiride.db", null, 2);
+        super(applicationcontext, "lottostars.db", null, 1);
     }
     @Override
     public void onCreate(SQLiteDatabase database) {
-        String customer, customer_card, promo;
-        customer="CREATE TABLE IF NOT EXISTS customer(id INTEGER PRIMARY KEY AUTOINCREMENT, customers_id TEXT, customer_name TEXT, customer_email TEXT, customer_phone_no TEXT, status TEXT)";
+
+        String customer, customer_card, customer_transactions;
+        customer="CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY AUTOINCREMENT, users_id TEXT, name TEXT, email TEXT, phone TEXT, location TEXT, status TEXT)";
         customer_card	=	"CREATE TABLE IF NOT EXISTS customer_card(id INTEGER PRIMARY KEY AUTOINCREMENT,reference TEXT, authorization_code TEXT, last_four_digit TEXT, name_on_card TEXT)";
-        promo	=	"CREATE TABLE IF NOT EXISTS promo(id INTEGER PRIMARY KEY AUTOINCREMENT,promo_code TEXT)";
+        customer_transactions	=	"CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "game_no_played TEXT, game_names_id TEXT," +
+                " game_types_id TEXT, game_type_options_id TEXT, game_quaters_id TEXT, amount_paid TEXT," +
+                " time_played TEXT, payment_option TEXT)";
         database.execSQL(customer_card);
         database.execSQL(customer);
-        database.execSQL(promo);
+        database.execSQL(customer_transactions);
     }
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
@@ -41,14 +45,14 @@ public class DBController extends SQLiteOpenHelper{
         onCreate(database);
     }
     /**
-     * Create of update Customer's data
+     * Create of update User's data
      * @param customer
      * @throws JSONException
      */
-    public void createOrUpdateCustomerRecord(Customer customer) throws JSONException{
+    public void createOrUpdateUserRecord(User customer) throws JSONException{
         SQLiteDatabase db=this.getWritableDatabase();
         try{
-            String sql="SELECT DISTINCT * FROM "+Constants.CUSTOMER+" WHERE "+Constants.CUSTOMERS_ID+ "='"+customer.getCustomer_id()+"'";
+            String sql="SELECT DISTINCT * FROM "+Constants.USER+" WHERE "+Constants.USERS_ID+ "='"+customer.getUser_id()+"'";
             Cursor cursor=db.rawQuery(sql, null);
             /**
              * Update Customers data if exist
@@ -56,64 +60,26 @@ public class DBController extends SQLiteOpenHelper{
             if(cursor.getCount()>0){
                 ContentValues val=new ContentValues();
                 val.put(Constants.STATUS,"1");
-                val.put(Constants.CUSTOMERS_ID, customer.getCustomer_id());
-                val.put(Constants.CUSTOMER_NAME, customer.getCustomer_name());
-                val.put(Constants.CUSTOMER_EMAIL, customer.getCustomer_email());
-                val.put(Constants.CUSTOMER_PHONE_NO, customer.getCustomer_phone_no());
-                db.update(Constants.CUSTOMER,val,Constants.CUSTOMERS_ID+" = "+customer.getCustomer_id(),null);
+                val.put(Constants.USERS_ID, customer.getUser_id());
+                val.put(Constants.USER_NAME, customer.getUser_name());
+                val.put(Constants.USER_EMAIL, customer.getUser_email());
+                val.put(Constants.USER_PHONE_NO, customer.getUser_phone_no());
+                val.put(Constants.USER_ADDRESS, customer.getUserLocation());
+                db.update(Constants.USER,val,Constants.USERS_ID+" = "+customer.getUser_id(),null);
                 db.close();
             }
             /**
-             * Create Customer Info
+             * Create User Info
              */
             else{
                 ContentValues val=new ContentValues();
                 val.put(Constants.STATUS, "1");
-                val.put(Constants.CUSTOMERS_ID, customer.getCustomer_id());
-                val.put(Constants.CUSTOMER_NAME, customer.getCustomer_name());
-                val.put(Constants.CUSTOMER_EMAIL, customer.getCustomer_email());
-                val.put(Constants.CUSTOMER_PHONE_NO, customer.getCustomer_phone_no());
-                db.insert(Constants.CUSTOMER, null, val);
-                db.close();
-            }
-        }
-        catch (SQLException ex){
-            ex.printStackTrace();
-        }
-    }
-    /**
-     * dd payment card r update already added card
-     * @param reference
-     * @param lastFourDigit
-     * @param nameOnCard
-     */
-    public void createOrUpdateCardRecord(String reference, String authorization_code, String lastFourDigit,String nameOnCard){
-        SQLiteDatabase db=this.getWritableDatabase();
-        try{
-            String sql="SELECT * FROM " + Constants.CUSTOMER_CARD + " WHERE " + Constants.LAST_FOUR_DIGIT+ " = '" + lastFourDigit + "'";
-            Cursor cursor=db.rawQuery(sql, null);
-            /**
-             * Update Customers data if exist
-             */
-            if(cursor.getCount()>0){
-                ContentValues val=new ContentValues();
-                val.put(Constants.REFERENCE,reference);
-                val.put(Constants.AUTHORIZATION_CODE, authorization_code);
-                val.put(Constants.LAST_FOUR_DIGIT, lastFourDigit);
-                val.put(Constants.NAME_ON_CARD, nameOnCard);
-                db.update(Constants.CUSTOMER_CARD,val, Constants.LAST_FOUR_DIGIT + " = " +lastFourDigit,null);
-                db.close();
-            }
-            /**
-             * Create Customer Card
-             * */
-            else{
-                ContentValues val=new ContentValues();
-                val.put(Constants.REFERENCE,reference);
-                val.put(Constants.AUTHORIZATION_CODE, authorization_code);
-                val.put(Constants.LAST_FOUR_DIGIT, lastFourDigit);
-                val.put(Constants.NAME_ON_CARD, nameOnCard);
-                db.insert(Constants.CUSTOMER_CARD, null, val);
+                val.put(Constants.USERS_ID, customer.getUser_id());
+                val.put(Constants.USER_NAME, customer.getUser_name());
+                val.put(Constants.USER_EMAIL, customer.getUser_email());
+                val.put(Constants.USER_PHONE_NO, customer.getUser_phone_no());
+                val.put(Constants.USER_ADDRESS, customer.getUserLocation());
+                db.insert(Constants.USER, null, val);
                 db.close();
             }
         }
@@ -122,50 +88,87 @@ public class DBController extends SQLiteOpenHelper{
         }
     }
 
+
+
     /**
-     * Delete card
+     * Create of update User's data
+     * @param transaction
+     * @throws JSONException
+     */
+    public void createTransaction(Transaction transaction) throws JSONException{
+        SQLiteDatabase db=this.getWritableDatabase();
+        try {
+            ContentValues val = new ContentValues();
+            val.put(Constants.GAME_NO_PLAYED, transaction.getGame_no_played());
+            val.put(Constants.GAME_NAMES_ID, transaction.getGame_names_id());
+            val.put(Constants.GAME_TYPES_ID, transaction.getGame_types_id());
+            val.put(Constants.GAME_TYPE_OPTIONS_ID, transaction.getGame_types_id());
+            val.put(Constants.GAME_QUATERS_ID, transaction.getGame_quaters_id());
+            val.put(Constants.AMOUNT_PAID, transaction.getAmount_paid());
+            val.put(Constants.TIME_PLAYED, transaction.getTime_played());
+            val.put(Constants.PAYMENT_OPTION, transaction.getPayment_option());
+            db.insert(Constants.USER, null, val);
+            db.close();
+
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+    /**
+     * Get User data
      * @return
      */
-    public void deleteCard()
-    {
+    public HashMap<String, String> getUser(){
         SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("DELETE FROM customer_card");
-        db.close();
-    }
-    public HashMap<String, String> getCardDetails(){
-        SQLiteDatabase db=this.getWritableDatabase();
-        String sql="select * from customer_card";
-        HashMap<String, String> customer_card = new HashMap<String, String>();
+        String sql="select * from "+Constants.USER;
+        HashMap<String, String> user = new HashMap<String, String>();
         Cursor c=db.rawQuery(sql, null);
         if(c.moveToFirst()){
             do{
-                customer_card.put(Constants.REFERENCE, c.getString(1));
-                customer_card.put(Constants.AUTHORIZATION_CODE,c.getString(2));
-                customer_card.put(Constants.LAST_FOUR_DIGIT,c.getString(3));
-                customer_card.put(Constants.NAME_ON_CARD, c.getString(4));
+                user.put(Constants.USERS_ID, c.getString(1));
+                user.put(Constants.USER_NAME,c.getString(2));
+                user.put(Constants.USER_EMAIL,c.getString(3));
+                user.put(Constants.USER_PHONE_NO, c.getString(4));
+                user.put(Constants.USER_ADDRESS, c.getString(5));
             }while(c.moveToNext());
         }
-        return customer_card;
+        return user;
     }
+
     /**
-     * Get Customer data
+     * Get User data
      * @return
      */
-    public HashMap<String, String> getCustomer(){
+    public ArrayList<HashMap<String, String>> getTransactions(){
         SQLiteDatabase db=this.getWritableDatabase();
-        String sql="select * from "+Constants.CUSTOMER;
-        HashMap<String, String> customer = new HashMap<String, String>();
+        String sql="select * from "+Constants.TRANSACTIONS;
+        HashMap<String, String> transaction = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> transactions = new ArrayList<>();
         Cursor c=db.rawQuery(sql, null);
         if(c.moveToFirst()){
             do{
-                customer.put(Constants.CUSTOMERS_ID, c.getString(1));
-                customer.put(Constants.CUSTOMER_NAME,c.getString(2));
-                customer.put(Constants.CUSTOMER_EMAIL,c.getString(3));
-                customer.put(Constants.CUSTOMER_PHONE_NO, c.getString(4));
+                transaction.put(Constants.GAME_NO_PLAYED, c.getString(1));
+                transaction.put(Constants.GAME_NAMES_ID, c.getString(2));
+                transaction.put(Constants.GAME_TYPES_ID, c.getString(3));
+                transaction.put(Constants.GAME_TYPE_OPTIONS_ID, c.getString(4));
+                transaction.put(Constants.GAME_QUATERS_ID, c.getString(5));
+                transaction.put(Constants.AMOUNT_PAID, c.getString(6));
+                transaction.put(Constants.TIME_PLAYED, c.getString(7));
+                transaction.put(Constants.PAYMENT_OPTION, c.getString(8));
+                transactions.add(transaction);
             }while(c.moveToNext());
         }
-        return customer;
+        return transactions;
     }
+
+    public void deleteTransactions() {
+        SQLiteDatabase db=this.getWritableDatabase();
+        String sql="delete from "+Constants.TRANSACTIONS;
+        db.execSQL(sql);
+    }
+
+
     /**
      * Get Login status
      * @return
@@ -173,12 +176,12 @@ public class DBController extends SQLiteOpenHelper{
     public boolean confirmLoginStatus(){
         boolean stat=false;
         String _stat="";
-        String sql="select * from "+Constants.CUSTOMER;
+        String sql="select * from "+Constants.USER;
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor c=db.rawQuery(sql, null);
         if(c.getCount()!=0){
             if(c.moveToFirst()){
-                _stat=c.getString(5);
+                _stat=c.getString(6);
             }
             while(c.moveToNext());
 
@@ -192,47 +195,5 @@ public class DBController extends SQLiteOpenHelper{
         }
         return stat;
     }
-    //delete customer data from storage
-    public void logout(String customer_id){
-        SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("DELETE from "+ Constants.CUSTOMER);
-        db.close();
-    }
-    //create or update promo code
-    public void createOrUpdatePromoCode(String promoCode){
-        int id = 1;
-        SQLiteDatabase db=this.getWritableDatabase();
-        try{
-            String sql="SELECT DISTINCT * FROM promo";
-            Cursor cursor=db.rawQuery(sql, null);
-            if(cursor.getCount()>0){
-                ContentValues val=new ContentValues();
-                val.put("promo_code",promoCode);
-                db.update("promo",val,"id="+id,null);
-                db.close();
-            }
-            else{
-                ContentValues val=new ContentValues();
-                val.put("promo_code", promoCode);
-                db.insert("promo", null, val);
-                db.close();
-            }
-        }
-        catch (SQLException ex){
-            ex.printStackTrace();
-        }
-    }
-    //get promo code
-    public String getPromoCode(){
-        SQLiteDatabase db=this.getWritableDatabase();
-        String code ="";
-        String sql="select * from promo";
-        Cursor c=db.rawQuery(sql, null);
-        if(c.moveToFirst()){
-            do{
-                code = c.getString(1);
-            }while(c.moveToNext());
-        }
-        return code;
-    }
+
 }

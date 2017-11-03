@@ -1,22 +1,44 @@
 package com.example.mygame.mygame;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.LoginFilter;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.mygame.mygame.auth.CreateAccount;
+import com.example.mygame.mygame.auth.LoginActivity;
+import com.example.mygame.mygame.auth.PhoneRegistration;
 
+import utils.Constants;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+private Button signInButton, signUpButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
+        setViews();
+        setOnClickListener();
+    }
+
+    private void setOnClickListener() {
+        signInButton.setOnClickListener(this);
+        signUpButton.setOnClickListener(this);
+    }
+
+    private void setViews() {
+        signInButton = (Button) findViewById(R.id.sign_in_button);
+        signUpButton = (Button) findViewById(R.id.sign_up_button);
     }
 
     @Override
@@ -37,7 +59,27 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == R.id.settings) {
+            startActivity(new Intent(MainActivity.this, AccountSettings.class));
+            finish();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.sign_in_button:
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+                break;
+            case R.id.sign_up_button:
+                Intent intent = new Intent(MainActivity.this, PhoneRegistration.class);
+                intent.putExtra(Constants.ACTIVITY_TYPE, Constants.REGISTRATION_ACTIVITY_TYPE);
+                startActivity(intent);
+                finish();
+                break;
+        }
     }
 }
