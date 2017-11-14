@@ -7,24 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import com.example.mygame.mygame.R;
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
 	private Activity context;
@@ -53,6 +42,7 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
 		TextView datePlayed = (TextView) rowView.findViewById(R.id.date_played);
 		TextView paymentOption = (TextView) rowView.findViewById(R.id.payment_option);
 		TextView gameResult = rowView.findViewById(R.id.game_result);
+
 		String timePlayed[] = this.transactions.get(position).getTime_played().split(":");
 		int hr = Integer.parseInt(timePlayed[0]);
 		String mm = timePlayed[1];
@@ -81,6 +71,9 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
                 gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.red, null));
             }
             else if(TextUtils.equals(this.transactions.get(position).getStatus(), Constants.PENDING)){
+                gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.yellow, null));
+            }
+            else {
                 gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.yellow, null));
             }
         }

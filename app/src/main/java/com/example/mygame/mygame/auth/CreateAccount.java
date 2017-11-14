@@ -1,5 +1,4 @@
 package com.example.mygame.mygame.auth;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +7,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -34,9 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import model.User;
-import model.DBController;
-import utils.Constants;
+import com.example.mygame.mygame.model.User;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.utils.Constants;
 
 
 public class CreateAccount extends AppCompatActivity implements View.OnClickListener {

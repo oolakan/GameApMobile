@@ -1,4 +1,4 @@
-package com.example.mygame.mygame;
+package com.example.mygame.mygame.report;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.preference.DialogPreference;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -24,9 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mygame.mygame.custom.GameTransactionsCustomList;
+import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.custom.UsersCustomList;
-import com.example.mygame.mygame.game.SelectedGameActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -42,11 +40,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import model.Agent;
-import model.DBController;
-import model.Transaction;
-import model.User;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.User;
+import com.example.mygame.mygame.utils.Constants;
 
 public class UsersActivity extends AppCompatActivity implements UsersCustomList.customButtonListener {
     private ArrayList<User> userArrayList = new ArrayList<>();

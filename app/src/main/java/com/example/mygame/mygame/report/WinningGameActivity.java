@@ -1,4 +1,4 @@
-package com.example.mygame.mygame;
+package com.example.mygame.mygame.report;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -24,8 +24,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.custom.GameTransactionsCustomList;
-import com.example.mygame.mygame.game.GameHomeActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -42,9 +42,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import model.DBController;
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 public class WinningGameActivity extends AppCompatActivity {
     private ListView listView;

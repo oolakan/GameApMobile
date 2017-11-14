@@ -2,21 +2,17 @@ package com.example.mygame.mygame;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.LoginFilter;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
-import com.example.mygame.mygame.auth.CreateAccount;
 import com.example.mygame.mygame.auth.LoginActivity;
 import com.example.mygame.mygame.auth.PhoneRegistration;
 
-import utils.Constants;
+import com.example.mygame.mygame.utils.Constants;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 private Button signInButton, signUpButton;

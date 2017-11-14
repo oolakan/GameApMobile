@@ -1,4 +1,4 @@
-package model;
+package com.example.mygame.mygame.model;
 /**
  * @author JOSEPH
  *
@@ -10,16 +10,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.mygame.mygame.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import utils.Constants;
+import com.example.mygame.mygame.utils.Constants;
 
 public class DBController extends SQLiteOpenHelper {
     public DBController(Context applicationcontext) {

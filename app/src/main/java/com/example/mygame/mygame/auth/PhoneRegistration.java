@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.mygame.mygame.MainActivity;
 import com.example.mygame.mygame.R;
@@ -31,7 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import utils.Constants;
+import com.example.mygame.mygame.utils.Constants;
 
 public class PhoneRegistration extends AppCompatActivity {
 

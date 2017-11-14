@@ -1,7 +1,6 @@
 package com.example.mygame.mygame.custom;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import model.Game;
-import utils.Constants;
+import com.example.mygame.mygame.model.Game;
+import com.example.mygame.mygame.utils.Constants;
 
 import com.example.mygame.mygame.R;
 

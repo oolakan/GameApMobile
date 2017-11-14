@@ -25,16 +25,15 @@ import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.adapter.GridListAdapter;
 
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import model.DBController;
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 import static com.example.mygame.mygame.adapter.GridListAdapter.*;
 

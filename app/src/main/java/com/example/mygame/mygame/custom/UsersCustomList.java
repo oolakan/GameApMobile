@@ -1,27 +1,21 @@
 package com.example.mygame.mygame.custom;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mygame.mygame.R;
-import com.example.mygame.mygame.adapter.GridListAdapter;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import model.Transaction;
-import model.User;
-import utils.Constants;
+import com.example.mygame.mygame.model.User;
+import com.example.mygame.mygame.utils.Constants;
 
 public class UsersCustomList extends BaseAdapter {
 	private Context context;

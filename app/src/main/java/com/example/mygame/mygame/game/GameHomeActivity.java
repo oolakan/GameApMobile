@@ -1,22 +1,16 @@
 package com.example.mygame.mygame.game;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -29,49 +23,41 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mygame.mygame.GameValidationActivity;
 import com.example.mygame.mygame.R;
-import com.example.mygame.mygame.SalesActivity;
-import com.example.mygame.mygame.SettingsActivity;
-import com.example.mygame.mygame.TransactionsActivity;
-import com.example.mygame.mygame.UsersActivity;
-import com.example.mygame.mygame.WinningGameActivity;
+import com.example.mygame.mygame.report.SalesActivity;
+import com.example.mygame.mygame.auth.SettingsActivity;
+import com.example.mygame.mygame.report.TransactionsActivity;
+import com.example.mygame.mygame.report.UsersActivity;
+import com.example.mygame.mygame.report.WinningGameActivity;
 import com.example.mygame.mygame.auth.LoginActivity;
 import com.example.mygame.mygame.custom.SpinnerCustomList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
-import model.DBController;
-import model.Game;
-import model.User;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.Game;
+import com.example.mygame.mygame.utils.Constants;
 
 public class GameHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {

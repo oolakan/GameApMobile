@@ -38,9 +38,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import model.DBController;
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 public class GameSummaryActivity extends AppCompatActivity {
 

@@ -1,19 +1,14 @@
-package com.example.mygame.mygame;
+package com.example.mygame.mygame.report;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,10 +19,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.custom.GameTransactionsCustomList;
-import com.example.mygame.mygame.custom.SpinnerCustomList;
-import com.example.mygame.mygame.game.GameHomeActivity;
-import com.example.mygame.mygame.game.GameSummaryActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -44,10 +37,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import model.DBController;
-import model.Game;
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 public class SalesActivity extends AppCompatActivity {
 

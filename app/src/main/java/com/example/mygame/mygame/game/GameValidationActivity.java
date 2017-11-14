@@ -1,4 +1,4 @@
-package com.example.mygame.mygame;
+package com.example.mygame.mygame.game;
 
 import android.app.Activity;
 import android.net.ConnectivityManager;
@@ -18,13 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.custom.GameTransactionsCustomList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,8 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import model.Transaction;
-import utils.Constants;
+import com.example.mygame.mygame.model.Transaction;
+import com.example.mygame.mygame.utils.Constants;
 
 public class GameValidationActivity extends AppCompatActivity {
 

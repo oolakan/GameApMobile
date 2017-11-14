@@ -1,9 +1,9 @@
-package model;
+package com.example.mygame.mygame.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import utils.Constants;
+import com.example.mygame.mygame.utils.Constants;
 
 /**
  * Created by HighStrit on 23/11/2016.

@@ -6,11 +6,10 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.mygame.mygame.auth.LoginActivity;
 import com.example.mygame.mygame.game.GameHomeActivity;
 
-import model.DBController;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.utils.Constants;
 
 public class SplashActivity extends AppCompatActivity {
 

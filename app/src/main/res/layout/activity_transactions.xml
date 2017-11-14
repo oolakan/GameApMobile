@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mygame.mygame.TransactionsActivity"
+    tools:context="com.example.mygame.mygame.report.TransactionsActivity"
     android:background="@drawable/transparent_bg"
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
     <android.support.v7.widget.Toolbar

@@ -19,7 +19,7 @@ import android.widget.EditText;
 
 import com.example.mygame.mygame.R;
 
-import utils.Constants;
+import com.example.mygame.mygame.utils.Constants;
 
 public class VerifyOtpActivity extends AppCompatActivity {
 

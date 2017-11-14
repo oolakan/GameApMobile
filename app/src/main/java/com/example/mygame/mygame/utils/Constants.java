@@ -1,4 +1,4 @@
-package utils;
+package com.example.mygame.mygame.utils;
 public final class Constants {
 
     public static final String EMPTY = "";

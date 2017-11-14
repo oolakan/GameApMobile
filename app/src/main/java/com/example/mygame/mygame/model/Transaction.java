@@ -1,4 +1,4 @@
-package model;
+package com.example.mygame.mygame.model;
 
 /**
  * Created by swifta on 11/2/17.

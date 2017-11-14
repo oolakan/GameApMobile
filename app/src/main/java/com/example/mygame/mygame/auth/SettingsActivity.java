@@ -1,13 +1,11 @@
-package com.example.mygame.mygame;
+package com.example.mygame.mygame.auth;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -23,9 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mygame.mygame.auth.ForgotPassword;
-import com.example.mygame.mygame.auth.LoginActivity;
-import com.example.mygame.mygame.game.GameHomeActivity;
+import com.example.mygame.mygame.R;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -40,9 +36,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import model.DBController;
-import model.User;
-import utils.Constants;
+import com.example.mygame.mygame.model.DBController;
+import com.example.mygame.mygame.model.User;
+import com.example.mygame.mygame.utils.Constants;
 
 public class SettingsActivity extends AppCompatActivity {
 
