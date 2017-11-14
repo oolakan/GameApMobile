@@ -15,13 +15,22 @@ public final class Constants {
     public static final String TRANSACTION_INITIALIZATION_URL = Constants.BASE_URL + "/customer/transaction/initialize";
     public static final String CANCEL_REQUEST_URL =   Constants.BASE_URL + "/ride_request/cancel/";
     public static final String SIGN_IN_URL = Constants.BASE_URL + "/users/login";
-    public static final String REGISTER_URL = Constants.BASE_URL + "/users/register";
+    public static final String REGISTER_URL = Constants.BASE_URL + "/users/register/";
     public static final String PASSWORD_RESET_URL = Constants.BASE_URL + "/users/reset_password";
     public static final String GAMES_INFORMATION_URL = Constants.BASE_URL + "/game";
     public static final String GAME_CHECK_URL = Constants.BASE_URL + "/game/gameAvailability";
-
+    public static final String GAME_TRANSACTION_URL = Constants.BASE_URL + "/game/save/transactions";
+    public static final String SALES_REPORT_URL = Constants.BASE_URL + "/game/transactions/";
+    public static final String WINNING_GAMES_URL = Constants.BASE_URL + "/winnings/view/";
+    public static final String CREDIT_BALANCE_URL = Constants.BASE_URL + "/credit/";
+    public static final String CREDIT_BALANCE_UPDATE_URL = Constants.BASE_URL + "/credit/balance/";
+    public static final String AACOUNT_BALANCE_UPDATE_URL = Constants.BASE_URL + "/credit/update/";
+    public static final String VALIDATE_GAME_URL = Constants.BASE_URL + "/game/validate_game/";
+    public static final String AGENTS_URL = Constants.BASE_URL + "/users/agent/";
+    public static final String UPDATE_AGENT_URL = Constants.BASE_URL + "/users/agent/";
     public static final String HISTORY = "History";
     //User
+
     public static final String USER = "user";
     public static final String USER_ID = "id";
     public static final String USER_NAME = "name";
@@ -64,5 +73,40 @@ public final class Constants {
     public static final String TIME_PLAYED = "time_played";
     public static final String PAYMENT_OPTION = "payment_option";
     public static final String TRANSACTIONS = "transactions";
-    public static final String GAME_QUATERS = "game_quaters";
+    public static final String GAME_QUATERS = "quater";
+    public static final String START_TIME = "start_time";
+    public static final String STOP_TIME = "stop_time";
+    public static final String DRAW_TIME = "draw_time";
+    public static final String TOTAL_AMOUNT_STAKED = "total_amount_staked";
+    public static final String LINES = "lines";
+
+    public static final String TICKET_ID = "ticket_id";
+    public static final String UNIT_STAKE = "unit_stake";
+    public static final String APPROVAL_STATUS = "approval_status";
+    public static final String PENDING = "PENDING";
+    public static final String ACTIVE = "ACTIVE";
+    public static final String BLOCKED = "BLOCKED";
+    public static final String ROLES_ID = "roles_id";
+    public static final CharSequence AGENTS_ROLE_ID = "3";
+    public static final CharSequence MERCHANTS_ROLE_ID = "2";
+    public static final CharSequence ADMINS_ROLE_ID = "1";
+    public static final String SERIAL_NO = "serial_no";
+    public static final String TOTAL_AMOUNT = "total_amount";
+
+    public static final String CREDIT_BALANCE = "credit_balance";
+
+    public static final String GAME_TRANSACTIONS = "Transactions";
+    public static final String DAY = "day";
+    public static final String DATE_PLAYED = "date_played";
+    public static final String WINNING_AMOUNT = "winning_amount";
+
+    public static final String GAME_QUATER_NAME = "game_quater_name";
+    public static final String CREDIT_JSON_RESPONSE = "Credit";
+    public static final String AMOUNT = "amount";
+    public static final String WON = "WON";
+    public static final String LOOSE = "LOOSE";
+    public static final String AGENTS_JSON_RESPONSE = "Agents";
+
+    public static final String APPROVED = "APPROVED";
+
 }

@@ -59,10 +59,7 @@ private Button signInButton, signUpButton;
         if (id == R.id.action_settings) {
             return true;
         }
-        else if (id == R.id.settings) {
-            startActivity(new Intent(MainActivity.this, AccountSettings.class));
-            finish();
-        }
+
 
         return super.onOptionsItemSelected(item);
     }

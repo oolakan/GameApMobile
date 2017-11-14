@@ -7,16 +7,26 @@ package model;
 public class Transaction {
 
 
+    private String status;
     private String game_no_played;
     private String game_names_id;
     private String game_types_id;
     private String game_type_options_id;
     private String game_quaters_id;
-    private String amount_paid;
+    private String unitStake;
+    private String ticketId;
     private String time_played;
     private String payment_option;
-
-
+    private String lines;
+    private String serialNo;
+    private String totalAmount;
+    private String userId;
+    private String date_played;
+    private String winningAmount;
+    private String gameName;
+    private String gameType;
+    private String gameTypeOption;
+    private String gameQuater;
     public String getGame_no_played() {
         return game_no_played;
     }
@@ -57,12 +67,12 @@ public class Transaction {
         this.game_quaters_id = game_quaters_id;
     }
 
-    public String getAmount_paid() {
-        return amount_paid;
+    public String getUnitStake() {
+        return unitStake;
     }
 
-    public void setAmount_paid(String amount_paid) {
-        this.amount_paid = amount_paid;
+    public void setUnitStake(String amount_paid) {
+        this.unitStake = amount_paid;
     }
 
     public String getTime_played() {
@@ -82,4 +92,99 @@ public class Transaction {
     }
 
 
+    public String getLines() {
+        return lines;
+    }
+
+    public void setLines(String lines) {
+        this.lines = lines;
+    }
+
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getDate_played() {
+        return date_played;
+    }
+
+    public void setDate_played(String date_played) {
+        this.date_played = date_played;
+    }
+
+    public String getWinningAmount() {
+        return winningAmount;
+    }
+
+    public void setWinningAmount(String winningAmount) {
+        this.winningAmount = winningAmount;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
+    }
+
+    public String getGameQuater() {
+        return gameQuater;
+    }
+
+    public void setGameQuater(String gameQuater) {
+        this.gameQuater = gameQuater;
+    }
+
+    public String getGameTypeOption() {
+        return gameTypeOption;
+    }
+
+    public void setGameTypeOption(String gameTypeOption) {
+        this.gameTypeOption = gameTypeOption;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

@@ -12,7 +12,8 @@ import utils.Constants;
 public class User {
     private String customer_name, customer_email, customer_id, customer_phone_no;
     private JSONObject jsonObject;
-    private String password, repeated_password;
+    private String password, repeated_password, rolesId, ticket_id;
+
 
     public JSONObject getJsonObject() {
         return jsonObject;
@@ -32,6 +33,10 @@ public class User {
 
     public String getUser_id() throws JSONException{
         return getJsonObject().getString(Constants.ID);
+    }
+
+    public String getUserId() throws JSONException{
+        return getJsonObject().getString(Constants.USERS_ID);
     }
 
     public String getUser_phone_no() throws JSONException{
@@ -54,5 +59,21 @@ public class User {
             return true;
         }
         return false;
+    }
+
+    public String getRolesId() throws JSONException{
+        return getJsonObject().getString(Constants.ROLES_ID);
+    }
+
+    public void setRolesId(String rolesId) {
+        this.rolesId = rolesId;
+    }
+
+    public String getTicket_id() throws JSONException{
+        return getJsonObject().getString(Constants.TICKET_ID);
+    }
+
+    public String getCredit() throws JSONException{
+        return getJsonObject().getString(Constants.CREDIT_BALANCE);
     }
 }

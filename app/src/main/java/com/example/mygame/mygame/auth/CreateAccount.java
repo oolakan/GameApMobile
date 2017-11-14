@@ -2,11 +2,14 @@ package com.example.mygame.mygame.auth;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -155,15 +158,36 @@ public class CreateAccount extends AppCompatActivity implements View.OnClickList
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 JSONObject json = jsonObject.getJSONObject(Constants.USER_JSON_RESPONSE);
-                User user = new User();
-                user.setJsonObject(json);
-                db.createOrUpdateUserRecord(user);
-                if (db.confirmLoginStatus()) {
-                    startActivity(new Intent(CreateAccount.this, GameHomeActivity.class));
-                    finish();
+                String message =jsonObject.getString(Constants.MESSAGE);
+                String status = jsonObject.getString(Constants.STATUS);
+                if (TextUtils.equals(status, "200")) {
+                    if (TextUtils.equals(json.getString(Constants.APPROVAL_STATUS), Constants.PENDING)) {
+                        String msg = getString(R.string.account_not_approved);
+                        showDialog(msg);
+                    }
+                    else if (TextUtils.equals(json.getString(Constants.APPROVAL_STATUS), Constants.BLOCKED)) {
+                        String msg = getString(R.string.account_blocked);
+                        showDialog(msg);
+                    }
+                    else if (TextUtils.equals(json.getString(Constants.APPROVAL_STATUS), Constants.ACTIVE)) {
+                        User customer = new User();
+                        customer.setJsonObject(json);
+                        db.createOrUpdateUserRecord(customer);
+                        SharedPreferences sp = getSharedPreferences(Constants.USER_PREFS, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString(Constants.USERNAME, customer.getUser_name());
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(), getString(R.string.welcome_back) + Constants.SPACE + customer.getUser_name(), Toast.LENGTH_SHORT).show();
+                        if (db.confirmLoginStatus()) {
+                            startActivity(new Intent(CreateAccount.this, GameHomeActivity.class));
+                            finish();
+                        }
+                        Toast.makeText(getApplicationContext(), getString(R.string.welcome) + " " + customer.getUser_name(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-                Toast.makeText(getApplicationContext(), getString(R.string.welcome) + " " + user.getUser_name(), Toast.LENGTH_SHORT).show();
+
             } catch (JSONException ex) {
+                Log.e("JSONEXCEPTION", ex.getMessage());
             }
         }
     }
@@ -228,5 +252,19 @@ public class CreateAccount extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         finish();
+    }
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CreateAccount.this);
+        builder.setMessage(message)
+                .setTitle(R.string.dialog_title);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                startActivity(new Intent(CreateAccount.this, LoginActivity.class));
+                finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

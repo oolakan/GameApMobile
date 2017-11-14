@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -25,6 +26,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mygame.mygame.MainActivity;
@@ -67,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     private DBController db;
     private ProgressDialog pDialog;
 
+    private ProgressBar progressBar;
     private Button fb;
     private String name, email, img, user_social_id, phoneNo="";
 
@@ -142,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
         signupButton = (Button) findViewById(R.id.sign_up);
         forgot_password_button = (Button) findViewById(R.id.forgot_password);
         sign_in_button = (Button) findViewById(R.id.sign_in_button);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
     }
 
     public Button getSign_in_button() {
@@ -222,42 +226,49 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(LoginActivity.this);
-            pDialog.setMessage(Html.fromHtml("<b>Wait...</b><br/>Login in progress"));
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.getWindow().setBackgroundDrawableResource(R.color.textBoxTextColor);
-            pDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            pDialog.show();
+           showProgres();
         }
         protected void onPostExecute(String result) {
-            pDialog.dismiss();
+            hideProgress();
             Log.e("Result", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                JSONObject json = jsonObject.getJSONObject(Constants.USER_JSON_RESPONSE);
                 String message =jsonObject.getString(MESSAGE);
-                User customer = new User();
-                customer.setJsonObject(json);
-                db.createOrUpdateUserRecord(customer);
-                SharedPreferences sp = getSharedPreferences(Constants.USER_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString(Constants.USERNAME, customer.getUser_name());
-                editor.apply();
-
-                if(db.confirmLoginStatus()){
-                    startActivity(new Intent(LoginActivity.this, GameHomeActivity.class));
-                    finish();
+                String status = jsonObject.getString(Constants.STATUS);
+                if (TextUtils.equals(status, "200")) {
+                    JSONObject json = jsonObject.getJSONObject(Constants.USER_JSON_RESPONSE);
+                    User customer = new User();
+                    customer.setJsonObject(json);
+                    db.createOrUpdateUserRecord(customer);
+                    SharedPreferences sp = getSharedPreferences(Constants.USER_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString(Constants.USERNAME, customer.getUser_name());
+                    editor.apply();
+                    Toast.makeText(getApplicationContext(), getString(R.string.welcome_back)+Constants.SPACE+customer.getUser_name(), Toast.LENGTH_SHORT).show();
+                    if (db.confirmLoginStatus()) {
+                        startActivity(new Intent(LoginActivity.this, GameHomeActivity.class));
+                        finish();
+                    }
                 }
-                Toast.makeText(getApplicationContext(), getString(R.string.welcome_back)+Constants.SPACE+customer.getUser_name(), Toast.LENGTH_SHORT).show();
+                else if (TextUtils.equals(status, "203")) {
+                    showDialog(message);
+                    mEmailView.setText(Constants.EMPTY);
+                    mPasswordView.setText(Constants.EMPTY);
+                }
+                else if (TextUtils.equals(status, "202")) {
+                    showDialog(message);
+                    mEmailView.setText(Constants.EMPTY);
+                    mPasswordView.setText(Constants.EMPTY);
+                }
+                else if (TextUtils.equals(status, "201")) {
+                    showDialog(message);
+                }
+
             }
             catch (JSONException ex){
                 Log.e("Excepion", ex.getMessage());
+                String message = getString(R.string.poor_internet_connection);
+                showDialog(message);
             }
         }
     }
@@ -324,4 +335,24 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
         finish();
     }
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage(message)
+                .setTitle(R.string.dialog_title);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    //show progress
+    public void showProgres(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+    public void hideProgress(){
+        progressBar.setVisibility(View.GONE);
+    }
+
 }

@@ -34,10 +34,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mygame.mygame.GameValidationActivity;
 import com.example.mygame.mygame.R;
+import com.example.mygame.mygame.SalesActivity;
+import com.example.mygame.mygame.SettingsActivity;
+import com.example.mygame.mygame.TransactionsActivity;
+import com.example.mygame.mygame.UsersActivity;
+import com.example.mygame.mygame.WinningGameActivity;
 import com.example.mygame.mygame.auth.LoginActivity;
 import com.example.mygame.mygame.custom.SpinnerCustomList;
 
@@ -56,7 +63,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import model.DBController;
 import model.Game;
@@ -68,17 +78,16 @@ public class GameHomeActivity extends AppCompatActivity
 private DBController db;
     private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
-    private TextView userName, userEmail;
-    private ImageView userImage;
-    private Spinner gameNamesView, gameTypesView, gameTypeOptionsView, gameQuatersView;
+    private TextView userName, userEmail, customer_name, creditBalanceView;
+    private Spinner gameNamesView, gameTypesView, gameTypeOptionsView;
     private NavigationView navigationView;
     private View headerView;
     SpinnerCustomList gameNameAdapter;
     SpinnerCustomList gameTypeAdapter;
     SpinnerCustomList gameTypeOptionAdapter;
-    SpinnerCustomList gameQuaterAdapter;
 
-    ArrayList<Game> _gameQuaters;
+    private TextClock currentTime;
+
     ArrayList<Game> _gameTypeOptions;
     ArrayList<Game> _gameTypes;
     ArrayList<Game> _gameNames;
@@ -88,9 +97,19 @@ private DBController db;
 
     String _gameTypeId = "", _gameType="";
     String _gameTypeOptionId="", _gameTypeOption="";
-    String _gameQuaterId="", _gameQuater="";
+    String _gameQuaterId="", _gameQuaterName;
+
+    private String startTime, stopTime, drawTime;
+
+    private int mYear, mMonth, mDay, mHour, mMinute;
+    private String current_timestamp;
+    final Calendar c = Calendar.getInstance();
 
     private Button playGameBtn;
+    private String dateTimetoMillis;
+
+    private JSONArray gameTypeOptions;
+    private String creditBalance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,9 +125,23 @@ private DBController db;
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         db = new DBController(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView =  navigationView.getHeaderView(0);
+        customer_name = (TextView) headerView.findViewById(R.id.userName);
+        customer_name.setText(db.getUser().get(Constants.USER_NAME));
+        creditBalanceView = (TextView) headerView.findViewById(R.id.credit_balance);
+
+        // show agent menu if user is a merchat
+        if (TextUtils.equals(db.getUser().get(Constants.ROLES_ID), Constants.AGENTS_ROLE_ID)) {
+            Menu menu =navigationView.getMenu();
+            MenuItem target = menu.findItem(R.id.agents);
+            target.setVisible(false);
+        }
         setViews();
         setClicks();
         setName();
+        getCreditBalance();
         new GetGamesInfo().execute(Constants.GAMES_INFORMATION_URL);
         getPlayGameBtn().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +156,24 @@ private DBController db;
             }
         });
 
+    }
+
+    private void getCreditBalance() {
+        if(isConnected()) {
+            new GetCreditBalance().execute(Constants.CREDIT_BALANCE_URL);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getCreditBalance();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCreditBalance();
     }
 
     private void validate() {
@@ -140,12 +191,22 @@ private DBController db;
             return;
         }
 
-        if (TextUtils.isEmpty(_gameQuaterId)) {
-            Toast.makeText(getApplicationContext(), getString(R.string.game_qaters), Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (isConnected()) {
-            new CheckGameAvailability().execute(Constants.GAME_CHECK_URL);
+            Intent intent = new Intent(GameHomeActivity.this, SelectedGameActivity.class);
+            intent.putExtra(Constants.GAME_NAME, _gameName);
+            intent.putExtra(Constants.GAME_TYPE, _gameType);
+            intent.putExtra(Constants.GAME_TYPE_OPTION, _gameTypeOption);
+            intent.putExtra(Constants.GAME_QUATERS, _gameQuaterName);
+
+            intent.putExtra(Constants.GAME_NAMES_ID, _gameId);
+            intent.putExtra(Constants.GAME_TYPES_ID, _gameTypeId);
+            intent.putExtra(Constants.GAME_TYPE_OPTIONS_ID, _gameTypeOptionId);
+            intent.putExtra(Constants.GAME_QUATERS_ID, _gameQuaterId);
+
+            intent.putExtra(Constants.START_TIME, startTime);
+            intent.putExtra(Constants.STOP_TIME, stopTime);
+            intent.putExtra(Constants.DRAW_TIME, drawTime);
+            startActivity(intent);
         }
         else {
             showDialog(getString(R.string.no_internet_connection));
@@ -178,18 +239,18 @@ private DBController db;
         navigationView.setNavigationItemSelectedListener(this);
         headerView =  navigationView.getHeaderView(0);
         userName = (TextView) headerView.findViewById(R.id.userName);
-        userImage = (ImageView) headerView.findViewById(R.id.userImage);
         gameNamesView = (Spinner) findViewById(R.id.game_name);
         gameTypesView = (Spinner) findViewById(R.id.game_type);
         gameTypeOptionsView = (Spinner) findViewById(R.id.game_type_option);
-        gameQuatersView = (Spinner) findViewById(R.id.game_quaters);
+
         playGameBtn = (Button) findViewById(R.id.start_game);
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
+        currentTime = findViewById(R.id.currentTime);
         gameNamesView.setOnItemSelectedListener(this);
         gameTypesView.setOnItemSelectedListener(this);
         gameTypeOptionsView.setOnItemSelectedListener(this);
-        gameQuatersView.setOnItemSelectedListener(this);
+
     }
 
     @Override
@@ -232,12 +293,30 @@ private DBController db;
         int id = item.getItemId();
 
         if (id == R.id.home) {
-            // Handle the camera action
+           startActivity(getIntent());
         } else if (id == R.id.winnings) {
-
+            startActivity(new Intent(GameHomeActivity.this, WinningGameActivity.class));
         } else if (id == R.id.transactions) {
-
-        } else if (id == R.id.logout) {
+            startActivity(new Intent(GameHomeActivity.this, TransactionsActivity.class));
+        }
+        else if (id == R.id.sales) {
+            startActivity(new Intent(GameHomeActivity.this, SalesActivity.class));
+        }
+        else if (id == R.id.logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.USER_PREFS, MODE_PRIVATE);
+            sharedPreferences.edit().clear().apply();
+            startActivity(new Intent(GameHomeActivity.this, LoginActivity.class));
+            db.deleteUser();
+            finish();
+        }
+        else if (id == R.id.settings) {
+            startActivity(new Intent(GameHomeActivity.this, SettingsActivity.class));
+        }
+        else if (id == R.id.validate) {
+            startActivity(new Intent(GameHomeActivity.this, GameValidationActivity.class));
+        }
+        else if (id == R.id.agents) {
+            startActivity(new Intent(GameHomeActivity.this, UsersActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -250,19 +329,44 @@ private DBController db;
         Spinner spinner = (Spinner) adapterView;
         if (spinner.getId() == R.id.game_name) {
             _gameId = _gameNames.get(i).getId();
+            _gameQuaterId = _gameNames.get(i).getGameQuaterId();
+            _gameQuaterName = _gameNames.get(i).getGameQuaterName();
             _gameName = _gameNames.get(i).getName();
+            startTime = _gameNames.get(i).getStartTime();
+            stopTime = _gameNames.get(i).getStopTIme();
+            drawTime = _gameNames.get(i).getDrawTime();
         }
         else if (spinner.getId() == R.id.game_type) {
             _gameTypeId = _gameTypes.get(i).getId();
             _gameType = _gameTypes.get(i).getName();
+
+            // populate game type options based on users selection
+            try {
+                _gameTypeOptions = new ArrayList<>();
+                Game iGameTypeOption = new Game();
+                iGameTypeOption.setName(getString(R.string.select_game_type_option).toUpperCase());
+                iGameTypeOption.setGameDay(Constants.EMPTY);
+                _gameTypeOptions.add(iGameTypeOption);
+                int gameTypeOptionCount = gameTypeOptions.length();
+                for (int index = 0; index < gameTypeOptionCount; index++) {
+                    Game game = new Game();
+                    JSONObject jsonObject = gameTypeOptions.getJSONObject(index);
+                    if (jsonObject.getString(Constants.NAME).contains(_gameType)) {
+                        game.setId(jsonObject.getString(Constants.ID));
+                        game.setName(jsonObject.getString(Constants.NAME));
+                        game.setGameDay(Constants.EMPTY);
+                        _gameTypeOptions.add(game);
+                    }
+                }
+                gameTypeOptionAdapter = new SpinnerCustomList(GameHomeActivity.this, _gameTypeOptions);
+                gameTypeOptionsView.setAdapter(gameTypeOptionAdapter);
+            }catch (JSONException ex){
+                ex.printStackTrace();
+            }
         }
         else if (spinner.getId() == R.id.game_type_option) {
             _gameTypeOptionId = _gameTypeOptions.get(i).getId();
             _gameTypeOption = _gameTypeOptions.get(i).getName();
-        }
-        else if (spinner.getId() == R.id.game_quaters) {
-            _gameQuaterId = _gameQuaters.get(i).getId();
-            _gameQuater = _gameQuaters.get(i).getName();
         }
     }
 
@@ -282,6 +386,7 @@ private DBController db;
             try {
                 return GET(urls[0]);
             } catch (JSONException ex) {
+                Log.e("JSONSException",ex.getMessage());
             }
             return null;
         }
@@ -289,7 +394,6 @@ private DBController db;
         protected void onPreExecute() {
             super.onPreExecute();
             showBar();
-
         }
         protected void onPostExecute(String result) {
             Log.e("Result", result);
@@ -298,50 +402,40 @@ private DBController db;
                 JSONObject jsonObject = new JSONObject(result);
                 JSONArray gameNames = jsonObject.getJSONArray(Constants.GAME_NAMES_JSON_RESPONSE);
                 JSONArray gameTypes = jsonObject.getJSONArray(Constants.GAME_TYPES_JSON_RESPONSE);
-                JSONArray gameTypeOptions = jsonObject.getJSONArray(Constants.GAME_TYPE_OPTIONS_JSON_RESPONSE);
-                JSONArray gameQuaters = jsonObject.getJSONArray(Constants.GAME_QUATERS_JSON_RESPONSE);
+                gameTypeOptions = jsonObject.getJSONArray(Constants.GAME_TYPE_OPTIONS_JSON_RESPONSE);
+                int gameNamesCount = gameNames.length();
                 _gameNames = new ArrayList<>();
                 Game iGameName = new Game();
-                iGameName.setName(getString(R.string.select_game_name));
+                iGameName.setName(getString(R.string.select_game_name).toUpperCase());
+                iGameName.setGameDay(Constants.EMPTY);
                 _gameNames.add(iGameName);
-                for (int i=0 ;i<gameNames.length(); i++) {
+                for (int i=0 ;i<gameNamesCount; i++) {
                     Game game = new Game();
-                    game.setId(gameNames.getJSONObject(i).getString(Constants.ID));
-                    game.setName(gameNames.getJSONObject(i).getString(Constants.NAME));
+                    JSONObject jsonObject1 = gameNames.getJSONObject(i);
+                    game.setId(jsonObject1.getString(Constants.ID));
+                    game.setGameQuaterId(jsonObject1.getJSONObject(Constants.GAME_QUATERS).getString(Constants.ID));
+                    game.setGameQuaterName(jsonObject1.getJSONObject(Constants.GAME_QUATERS).getString(Constants.NAME));
+                    game.setName(jsonObject1.getString(Constants.NAME));
+                    game.setStartTime(jsonObject1.getString(Constants.START_TIME));
+                    game.setStopTIme(jsonObject1.getString(Constants.STOP_TIME));
+                    game.setDrawTime(jsonObject1.getString(Constants.DRAW_TIME));
+                    game.setGameDay(jsonObject1.getJSONObject(Constants.DAY).getString(Constants.NAME));
                     _gameNames.add(game);
                 }
 
                 _gameTypes = new ArrayList<>();
                 Game iGameTypes = new Game();
-                iGameTypes.setName(getString(R.string.select_game_type));
+                iGameTypes.setName(getString(R.string.select_game_type).toUpperCase());
+                iGameTypes.setGameDay(Constants.EMPTY);
                 _gameTypes.add(iGameTypes);
-                for (int i=0 ;i<gameNames.length(); i++) {
+                int gameTypesCount = gameTypes.length();
+                for (int i=0 ;i<gameTypesCount; i++) {
                     Game game = new Game();
-                    game.setId(gameTypes.getJSONObject(i).getString(Constants.ID));
-                    game.setName(gameTypes.getJSONObject(i).getString(Constants.NAME));
+                    JSONObject jsonObject1 = gameTypes.getJSONObject(i);
+                    game.setId(jsonObject1.getString(Constants.ID));
+                    game.setName(jsonObject1.getString(Constants.NAME));
+                    game.setGameDay(Constants.EMPTY);
                     _gameTypes.add(game);
-                }
-
-                _gameTypeOptions = new ArrayList<>();
-                Game iGameTypeOption = new Game();
-                iGameTypeOption.setName(getString(R.string.select_game_type_option));
-                _gameTypeOptions.add(iGameTypeOption);
-                for (int i=0 ;i<gameTypeOptions.length(); i++) {
-                    Game game = new Game();
-                    game.setId(gameTypeOptions.getJSONObject(i).getString(Constants.ID));
-                    game.setName(gameTypeOptions.getJSONObject(i).getString(Constants.NAME));
-                    _gameTypeOptions.add(game);
-                }
-
-                _gameQuaters = new ArrayList<>();
-                Game iGameQuater = new Game();
-                iGameQuater.setName(getString(R.string.select_game_quaters));
-                _gameQuaters.add(iGameQuater);
-                for (int i=0 ;i<gameQuaters.length(); i++) {
-                    Game game = new Game();
-                    game.setId(gameQuaters.getJSONObject(i).getString(Constants.ID));
-                    game.setName(gameQuaters.getJSONObject(i).getString(Constants.NAME));
-                    _gameQuaters.add(game);
                 }
 
                 gameNameAdapter = new SpinnerCustomList(GameHomeActivity.this, _gameNames);
@@ -350,16 +444,12 @@ private DBController db;
                 gameTypeAdapter = new SpinnerCustomList(GameHomeActivity.this, _gameTypes);
                 gameTypesView.setAdapter(gameTypeAdapter);
 
-                gameTypeOptionAdapter = new SpinnerCustomList(GameHomeActivity.this, _gameTypeOptions);
-                gameTypeOptionsView.setAdapter(gameTypeOptionAdapter);
-
-                gameQuaterAdapter = new SpinnerCustomList(GameHomeActivity.this, _gameQuaters);
-                gameQuatersView.setAdapter(gameQuaterAdapter);
-
             }
             catch (JSONException ex){
-                Log.e("Excepion", ex.getMessage());
+                Log.e("JSONExcepion1", ex.getMessage());
+                String message = getString(R.string.poor_internet_connection);
             }
+            catch (Exception ex) {}
         }
     }
     /**
@@ -386,8 +476,10 @@ private DBController db;
         }
         return result;
     }
-
-    public String POST(String url) throws JSONException{
+    /**
+     * Post user data to the server
+     */
+    public String GETCREDIT(String url) throws JSONException{
         InputStream inputStream = null;
         String result = "";
         JSONObject params;
@@ -395,15 +487,10 @@ private DBController db;
         String json = "";
         try {
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            params.put(Constants.GAME_NAMES_ID, _gameId);
-            params.put(Constants.GAME_QUATERS_ID, _gameQuaterId);
-            json = params.toString();
-            StringEntity se = new StringEntity(json);
-            httpPost.setEntity(se);
-            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpGet httpGet = new HttpGet(url + db.getUser().get(Constants.USERS_ID));
+            httpGet.setHeader("Accept", "application/json");
+            httpGet.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpClient.execute(httpGet);
             inputStream = httpResponse.getEntity().getContent();
             if (inputStream != null) {
                 result = convertInputStreamtoString(inputStream);
@@ -413,6 +500,7 @@ private DBController db;
         }
         return result;
     }
+
     public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -421,61 +509,6 @@ private DBController db;
         else
             return false;
 
-    }
-
-    /**
-     * Online Status AsyncTask
-     */
-    private class CheckGameAvailability extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            // TODO Auto-generated method stub
-            try {
-                return POST(urls[0]);
-            } catch (JSONException ex) {
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showBar();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            hideBar();
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                String message = jsonObject.getString(Constants.MESSAGE);
-                String status = String.format("%s",jsonObject.getInt(Constants.STATUS));
-                if (status.equals("202")) {
-                    showDialog(message);
-                }
-                else if (status.equals("200")) {
-                    Intent intent = new Intent(GameHomeActivity.this, SelectedGameActivity.class);
-                    intent.putExtra(Constants.GAME_NAME, _gameName);
-                    intent.putExtra(Constants.GAME_TYPE, _gameType);
-                    intent.putExtra(Constants.GAME_TYPE_OPTION, _gameTypeOption);
-                    intent.putExtra(Constants.GAME_QUATERS, _gameQuater);
-
-                    intent.putExtra(Constants.GAME_NAMES_ID, _gameId);
-                    intent.putExtra(Constants.GAME_TYPES_ID, _gameTypeId);
-                    intent.putExtra(Constants.GAME_TYPE_OPTIONS_ID, _gameTypeOptionId);
-                    intent.putExtra(Constants.GAME_QUATERS_ID, _gameQuaterId);
-
-                    startActivity(intent);
-                }
-                else {
-                    showDialog(message);
-                }
-            }
-            catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -514,5 +547,90 @@ private DBController db;
 
     private void hideBar (){
         progressBar.setVisibility(View.GONE);
+    }
+
+    public String getCurrentTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm a");
+        String strDate = "" + mdformat.format(calendar.getTime());
+        return strDate;
+    }
+
+//    private boolean isGameValid() {
+//        mYear = c.get(Calendar.YEAR);
+//        mMonth = c.get(Calendar.MONTH);
+//        mDay = c.get(Calendar.DAY_OF_MONTH);
+//        // get game stop time from server
+//        String[] splitTime = stopTime.split(":");
+//        mHour = Integer.parseInt(splitTime[0]);
+//        mMinute = Integer.parseInt(splitTime[1]);
+//
+//        Long current_timestamp = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+//        Long dateTimeToMillis = Long.parseLong(Integer.toString(componentTimeToTimestamp(mYear, mMonth, mDay, mHour, mMinute)));
+//
+//        if (current_timestamp < dateTimeToMillis) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+//    }
+    //convertdatetime to timestamp
+    public int componentTimeToTimestamp(int year, int month, int day, int hour, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);
+        c.set(Calendar.HOUR, hour);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return (int) (c.getTimeInMillis() / 1000L);
+    }
+
+
+    /**
+     * Online Status AsyncTask
+     */
+    private class GetCreditBalance extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            // TODO Auto-generated method stub
+            try {
+                return GETCREDIT(urls[0]);
+            } catch (JSONException ex) {
+                Log.e("JSONSException",ex.getMessage());
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        protected void onPostExecute(String result) {
+            Log.e("Result", result);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                int status = jsonObject.getInt(Constants.STATUS);
+                if (status == 200) {
+                    JSONObject balanceObject = jsonObject.getJSONObject(Constants.CREDIT_JSON_RESPONSE);
+                    if (balanceObject != null) {
+                        creditBalance = balanceObject.getString(Constants.AMOUNT);
+                        creditBalanceView.setText(String.format("Credit Balance: N%s.00", creditBalance));
+                    }
+                    else{
+                        creditBalanceView.setText(String.format("Credit Balance: N0.00", creditBalance));
+                    }
+                }
+                else {
+                    creditBalanceView.setText(String.format("Credit Balance: N0.00", creditBalance));
+                }
+            }
+            catch (JSONException ex){
+                Log.e("JSONExcepion", ex.getMessage());
+                String message = getString(R.string.poor_internet_connection);
+            }
+            catch (Exception ex) {}
+        }
     }
 }

@@ -5,7 +5,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:padding="20dp"
 tools:context="com.example.mygame.mygame.MainActivity"
-android:background="@color/primaryDark">
+    android:background="@drawable/transparent_bg">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -14,19 +14,19 @@ android:background="@color/primaryDark">
     android:layout_marginTop="100dp"
     android:id="@+id/linearLayout6">
 
-    <!--<ImageView-->
-        <!--android:layout_width="80dp"-->
-        <!--android:layout_height="80dp"-->
-        <!--android:src="@drawable/lotto_stars"-->
-        <!--android:layout_gravity="center"/>-->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/background_image"
+        android:layout_gravity="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:typeface="normal"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="45sp"
+        android:textColor="@color/black"
+        android:textSize="25sp"
         android:gravity="center"
         android:layout_gravity="center"
         android:textStyle="bold"/>
@@ -48,13 +48,14 @@ android:background="@color/primaryDark">
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="55dp"
-        android:background="@drawable/background_black"
+        android:background="@drawable/background_colorprimary"
+
         android:gravity="center"
         android:text="@string/sign_in_button_title"
-        android:textStyle="bold"
+        android:textStyle="normal"
         android:typeface="normal"
         android:textAllCaps="true"
-        android:textColor="@color/white"
+        android:textColor="@color/primaryDark"
         android:textSize="20sp" />
 
     <Button
@@ -63,13 +64,13 @@ android:background="@color/primaryDark">
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:background="@drawable/background_colorprimary"
+        android:background="@drawable/background_black"
         android:gravity="center"
         android:typeface="normal"
         android:text="@string/create_id"
         android:textAllCaps="true"
-        android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textStyle="normal"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
 </LinearLayout>

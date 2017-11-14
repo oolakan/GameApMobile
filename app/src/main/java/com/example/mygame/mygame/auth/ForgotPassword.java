@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -18,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,11 +52,12 @@ public class ForgotPassword extends AppCompatActivity {
     private final String MESSAGE = "message";
     private TextView password_reset_view;
     private String newPassword, confirmPassword;
-    private ImageButton close;
+
     private boolean cancel = false;
     private DBController db;
     private LinearLayout layout;
 
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +68,7 @@ public class ForgotPassword extends AppCompatActivity {
     }
 
     private void setButtonClicks() {
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
         reset_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +93,7 @@ public class ForgotPassword extends AppCompatActivity {
         confirmPasswordView = (EditText) findViewById(R.id.password_confirm);
         password_reset_view = (TextView) findViewById(R.id.password_reset_response);
         layout = (LinearLayout) findViewById(R.id.layout);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
     }
 
     public void hideLayout() {
@@ -146,36 +146,26 @@ public class ForgotPassword extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(ForgotPassword.this);
-            pDialog.setMessage(Html.fromHtml("<b>Wait...</b><br/>Password reset in progress..."));
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.getWindow().setBackgroundDrawableResource(R.color.textBoxTextColor);
-            pDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            pDialog.show();
+           showProgres();
         }
 
         protected void onPostExecute(String result) {
-            pDialog.cancel();
+            hideProgress();
             Log.e("Result", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString(MESSAGE);
                 JSONObject json = jsonObject.getJSONObject(Constants.USER_JSON_RESPONSE);
-                User customer = new User();
-                customer.setJsonObject(json);
-                db.createOrUpdateUserRecord(customer);
-                if (db.confirmLoginStatus()) {
-                    startActivity(new Intent(ForgotPassword.this, GameHomeActivity.class));
-                    finish();
-                }
                 int status = jsonObject.getInt(Constants.STATUS);
                 if (status == 200) {
+                    User customer = new User();
+                    customer.setJsonObject(json);
+                    db.createOrUpdateUserRecord(customer);
+                    SharedPreferences sp = getSharedPreferences(Constants.USER_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString(Constants.USERNAME, customer.getUser_name());
+                    editor.apply();
+                    showDialog(message);
                     hideLayout();
                     password_reset_view.setVisibility(View.VISIBLE);
                     password_reset_view.setText(message + getString(R.string.password_redirect));
@@ -257,5 +247,30 @@ public class ForgotPassword extends AppCompatActivity {
             return true;
         else
             return false;
+    }
+    //show progress
+    public void showProgres(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+    public void hideProgress(){
+        progressBar.setVisibility(View.GONE);
+    }
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ForgotPassword.this);
+        builder.setMessage(message)
+                .setTitle(R.string.dialog_title);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

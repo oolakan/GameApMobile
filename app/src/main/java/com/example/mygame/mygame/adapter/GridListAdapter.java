@@ -1,6 +1,7 @@
 package com.example.mygame.mygame.adapter;
 
 import android.content.Context;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class GridListAdapter extends BaseAdapter {
         viewHolder.gameNoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                viewHolder.gameNoButton.setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.lightPrimaryColor, null));
                 customListner.onButtonClickListner(i, arrayList.get(i),  viewHolder);
             }
         });
@@ -65,7 +67,7 @@ public class GridListAdapter extends BaseAdapter {
     //On selecting any view set the current position to selectedPositon and notify adapter
     private void itemClicked(View v) {
         selectedPosition = (Integer) v.getTag();
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     public class ViewHolder {
