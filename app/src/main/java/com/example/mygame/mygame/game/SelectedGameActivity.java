@@ -1,8 +1,10 @@
 package com.example.mygame.mygame.game;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +27,7 @@ import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.adapter.GridListAdapter;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +56,9 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
 
     private String[] gameNumbers;
     private String message;
+    private String serialNumberValue = "";
+    private SharedPreferences sharedPreferences;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +82,14 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
         gameTypeOption = getIntent().getStringExtra(Constants.GAME_TYPE_OPTION);
         gameType = getIntent().getStringExtra(Constants.GAME_TYPE);
         getGameType();
+        // create game serial no
+        sharedPreferences = getSharedPreferences(Constants.GAME_SERIAL_NO, MODE_PRIVATE);
+        if (!sharedPreferences.contains(Constants.SERIAL_NO)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            serialNumberValue = generateSerialNo();
+            editor.putString(Constants.SERIAL_NO, serialNumberValue);
+            editor.apply();
+        }
         getPlayNewGameButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,13 +100,27 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
             @Override
             public void onClick(View view) {
                 try {
+                    if (TextUtils.equals(gameNoSelectedTextBox.getText().toString().trim(), Constants.EMPTY)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.enter_game_no), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (TextUtils.equals(unitStakes.getText().toString().trim(), Constants.EMPTY)) {
+                        unitStakes.setError(getString(R.string.enter_unit_stake));
+                        unitStakes.requestFocus();
+                        return;
+                    }
                     saveGamePlayed();
-                    Intent intent = new Intent(SelectedGameActivity.this, GameSummaryActivity.class);
-                    startActivity(intent);
-                }catch (JSONException ex){}
+                    // check if saved
+                    if (dbController.getTransactions().length() > 0) {
+                        //delete serial number
+                        SharedPreferences sharedPreferences = getSharedPreferences(Constants.GAME_SERIAL_NO, MODE_PRIVATE);
+                        sharedPreferences.edit().clear().apply();
+                        startActivity(new Intent(SelectedGameActivity.this, GameSummaryActivity.class));
+                    }
+                }
+            catch (JSONException ex){}
             }
         });
-
 
         gameNoSelectedTextBox.setOnTouchListener(new View.OnTouchListener() {
             final int DRAWABLE_LEFT = 0;
@@ -108,7 +136,9 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
                     // leftEdgeOfRightDrawable -= getResources().getDimension(R.dimen.edittext_padding_left_right);
                     if (event.getRawX() >= leftEdgeOfRightDrawable) {
                         // clicked on clear icon
-                        gameNoSelectedTextBox.setText("");
+                        gameNoSelectedTextBox.setText(Constants.EMPTY);
+                        unitStakes.setText(Constants.EMPTY);
+                        totalAmount.setText(Constants.EMPTY);
                         loadGridView();
                         return true;
                     }
@@ -117,7 +147,48 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
             }
         });
 
-        againstNo.setFilters(new InputFilter[] {new InputFilter.LengthFilter(3)});
+        againstNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (TextUtils.equals(gameTypeOption, getString(R.string.against1))) {
+                    againstNo.setFilters(new InputFilter[] {
+                            new InputFilter.LengthFilter(3)
+                    });
+                }
+                if (TextUtils.equals(gameTypeOption, getString(R.string.against2))) {
+                    gameNumbers = againstNo.getText().toString().trim().split(",");
+                    if (gameNumbers.length == 2) {
+                        String message = getString(R.string.only_two_against);
+                        showDialog(message);
+                    }
+                }
+                if (TextUtils.equals(gameTypeOption, getString(R.string.against4))) {
+                    gameNumbers = againstNo.getText().toString().trim().split(",");
+                    if (gameNumbers.length == 4) {
+                        String message = getString(R.string.only_four_against);
+                        showDialog(message);
+                    }
+                }
+
+                if (TextUtils.equals(gameTypeOption, getString(R.string.against5))) {
+                    gameNumbers = againstNo.getText().toString().trim().split(",");
+                    if (gameNumbers.length == 5) {
+                        String message = getString(R.string.only_five_against);
+                        showDialog(message);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         unitStakes.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,6 +210,8 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
                         totalAmountStaked = result.get(Constants.TOTAL_AMOUNT_STAKED);
                     }
                     else if (TextUtils.equals(gameType, getString(R.string.AGAINST))) {
+                        String gameNumberSelected = againstNo.getText().toString().trim() + "," + gameNoSelectedTextBox.getText().toString().trim();
+                        gameNos = gameNumberSelected.split(",");
                         result = computeAgainst(unitStake, gameNos.length, gameTypeOption);
                         totalAmountStaked = result.get(Constants.TOTAL_AMOUNT_STAKED);
                     }
@@ -165,7 +238,8 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
     private void saveGamePlayed() throws JSONException {
         // get current timestamp
         String gameNumberSelected = "";
-        String serialNo = generateSerialNo();
+        String serialNo = sharedPreferences.getString(Constants.SERIAL_NO, Constants.EMPTY);
+       // if (TextUtils.equals(serialNumberValue, Constants.EMPTY));
         Long tsLong = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 
         String datePlayed = new java.text.SimpleDateFormat("yyyy-MM-dd").
@@ -205,9 +279,8 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
     }
 
     public String generateSerialNo() {
-        int rand;
-        Random r = new Random(System.currentTimeMillis());
-        rand = 1000000000 + r.nextInt(2000000000);
+        Random rnd = new Random();
+        int rand = 1000000000 + rnd.nextInt(900000000);
         return String.format("%s", Math.abs(rand));
     }
 
@@ -217,29 +290,28 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
             return;
         }
         if (TextUtils.equals(unitStakes.getText().toString().trim(), Constants.EMPTY)) {
-            Toast.makeText(getApplicationContext(), getString(R.string.enter_unit_stake), Toast.LENGTH_SHORT).show();
+            unitStakes.setError(getString(R.string.enter_unit_stake));
+            unitStakes.requestFocus();
             return;
         }
         try {
             saveGamePlayed();
             // check if saved
             if (dbController.getTransactions().length() > 0) {
-                Toast.makeText(getApplicationContext(),  "saved", Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(SelectedGameActivity.this, GameHomeActivity.class));
                 finish();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     private void loadGridView() {
         arrayList = new ArrayList<>();
         arrayList.clear();
-        gridView = (GridView) findViewById(R.id.game_grid_view);
-        for (int i = 1; i <= 90; i++)
-            arrayList.add(i + "");
+        gridView = findViewById(R.id.game_grid_view);
+        for (int i = 1; i <= 90; i++) {
+            arrayList.add(String.format("%s", i));
+        }
         adapter = new GridListAdapter(SelectedGameActivity.this, arrayList);
         adapter.setCustomButtonListner(SelectedGameActivity.this);
         gridView.setAdapter(adapter);

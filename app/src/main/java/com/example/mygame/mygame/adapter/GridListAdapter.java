@@ -45,14 +45,11 @@ public class GridListAdapter extends BaseAdapter {
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
-        if (view == null) {
             viewHolder = new ViewHolder();
             view = inflater.inflate(R.layout.grid_custom_row_layout, viewGroup, false);
             viewHolder.gameNoButton = (Button) view.findViewById(R.id.game_nos);
             viewHolder.gameNoButton.setText(arrayList.get(i));
             view.setTag(viewHolder);
-        } else
-            viewHolder = (ViewHolder) view.getTag();
         //Set the position tag to both radio button and label
         viewHolder.gameNoButton.setTag(i);
         viewHolder.gameNoButton.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +64,6 @@ public class GridListAdapter extends BaseAdapter {
     //On selecting any view set the current position to selectedPositon and notify adapter
     private void itemClicked(View v) {
         selectedPosition = (Integer) v.getTag();
-//        notifyDataSetChanged();
     }
 
     public class ViewHolder {

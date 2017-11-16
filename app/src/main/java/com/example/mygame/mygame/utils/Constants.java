@@ -42,6 +42,7 @@ public final class Constants {
 
     public static final String USERNAME = "username";
     public static final String USER_PREFS = "PREF.USERNAME";
+    public static final String GAME_SERIAL_NO = "PREF.SERIAL_NO";
     public static final String USERS_ID = "users_id";
     public static final String USER_PASSWORD = "password";
     public static final String ACTIVITY_TYPE = "activivty_type";

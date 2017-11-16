@@ -120,7 +120,6 @@ public class DBController extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         try {
             ContentValues val = new ContentValues();
-
             val.put(Constants.USERS_ID, transaction.getUserId());
             val.put(Constants.GAME_NO_PLAYED, transaction.getGame_no_played());
             val.put(Constants.GAME_NAMES_ID, transaction.getGame_names_id());
@@ -179,12 +178,11 @@ public class DBController extends SQLiteOpenHelper {
     public JSONArray getTransactions() throws JSONException{
         SQLiteDatabase db=this.getWritableDatabase();
         String sql="select * from "+Constants.TRANSACTIONS;
-        JSONObject transaction = new JSONObject();
         JSONArray transactions = new JSONArray();
         Cursor c=db.rawQuery(sql, null);
         if(c.moveToFirst()) {
             do{
-
+                JSONObject transaction = new JSONObject();
                 transaction.put(Constants.USERS_ID, c.getString(1));
                 transaction.put(Constants.GAME_NO_PLAYED, c.getString(2));
                 transaction.put(Constants.GAME_NAMES_ID, c.getString(3));
@@ -195,7 +193,6 @@ public class DBController extends SQLiteOpenHelper {
                 transaction.put(Constants.GAME_TYPE_OPTION, c.getString(8));
                 transaction.put(Constants.GAME_QUATERS_ID, c.getString(9));
                 transaction.put(Constants.GAME_QUATER_NAME, c.getString(10));
-
                 transaction.put(Constants.TICKET_ID, c.getString(12));
                 transaction.put(Constants.UNIT_STAKE, c.getString(13));
                 transaction.put(Constants.TOTAL_AMOUNT, c.getString(14));
@@ -203,7 +200,7 @@ public class DBController extends SQLiteOpenHelper {
                 transaction.put(Constants.TIME_PLAYED, c.getString(16));
                 transaction.put(Constants.PAYMENT_OPTION, c.getString(17));
                 transaction.put(Constants.SERIAL_NO, c.getString(18));
-
+                transaction.put(Constants.STATUS, Constants.PENDING);
                 transactions.put(transaction);
             }while(c.moveToNext());
         }

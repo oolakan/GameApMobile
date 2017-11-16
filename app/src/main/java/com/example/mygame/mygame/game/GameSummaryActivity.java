@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mygame.mygame.R;
 import com.example.mygame.mygame.custom.GameTransactionsCustomList;
@@ -56,6 +58,7 @@ public class GameSummaryActivity extends AppCompatActivity {
     private Button cancelGameBtn, proceedToPayBtn, printGameTicket;
 
     private double totalAmount;
+    private TextView serialNoView, totalAmountView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class GameSummaryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.black, null));
         toolbar.setTitle(getString(R.string.game_transactions));
-        toolbar.setNavigationIcon(R.drawable.back);
+       // toolbar.setNavigationIcon(R.drawable.back);
         toolbar.setBackgroundResource(R.color.colorPrimary);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +79,8 @@ public class GameSummaryActivity extends AppCompatActivity {
         dbController = new DBController(this);
         try {
             transactionLists = dbController.getTransactions();
+            // set serial number
+            serialNoView.setText(transactionLists.getJSONObject(0).getString(Constants.SERIAL_NO));
             Log.e("Transactions", transactionLists.toString());
             totalAmount = 0.0;
             for (int i = 0; i < transactionLists.length(); i++) {
@@ -98,6 +103,7 @@ public class GameSummaryActivity extends AppCompatActivity {
                 transactionArrayList.add(transaction);
                 totalAmount += Double.parseDouble(transactionLists.getJSONObject(i).getString(Constants.TOTAL_AMOUNT));
             }
+            totalAmountView.setText(String.format("N%s", totalAmount));
             Log.e("TransactionList", transactionArrayList.toString());
             adapter = new GameTransactionsCustomList(GameSummaryActivity.this, transactionArrayList);
             listView.setAdapter(adapter);
@@ -138,6 +144,8 @@ public class GameSummaryActivity extends AppCompatActivity {
         cancelGameBtn = findViewById(R.id.cancel_game);
         proceedToPayBtn = findViewById(R.id.proceedToPay);
         printGameTicket = findViewById(R.id.printGame);
+        serialNoView = findViewById(R.id.serial_no);
+        totalAmountView = findViewById(R.id.total_amount);
     }
 
     public Button getPrintGameTicket() {
@@ -299,6 +307,21 @@ public class GameSummaryActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showAlertDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GameSummaryActivity.this);
+        builder.setMessage(message)
+                .setTitle(R.string.message);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
     private void printTicket() {
         startActivity(new Intent(GameSummaryActivity.this, PrintResultActivity.class));
         finish();
@@ -370,10 +393,15 @@ public class GameSummaryActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateCreditBalance() {
         if (isConnected()) {
             new UpdateCreditBalance().execute(Constants.CREDIT_BALANCE_UPDATE_URL);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        String message = getString(R.string.complete_cancel);
+        showAlertDialog(message);
     }
 }

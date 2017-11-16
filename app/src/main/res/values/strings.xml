@@ -453,7 +453,7 @@
     <string name="pay_now">Pay now</string>
     <string name="game_printed">Game transaction printed successfully.</string>
     <string name="play_game">Play new game</string>
-    <string name="preview">Preview</string>
+    <string name="preview">Save and preview</string>
     <string name="agents">Agents</string>
     <string name="user_name">Name:</string>
     <string name="credit_balance">Credit balance:</string>
@@ -471,7 +471,7 @@
     <string name="poor_internet_connection">Poor internet connection. Check your internet connection.</string>
     <string name="enter_date">Enter date</string>
     <string name="wiining_games">Winning games</string>
-    <string name="enter_no">Enter No.</string>
+    <string name="enter_no">Enter Nos.</string>
     <string name="against">Against</string>
     <string name="direct3">3 DIRECT</string>
     <string name="direct4">4 DIRECT</string>
@@ -496,4 +496,10 @@
     <string name="enter_credit_amount">Enter credit amount</string>
     <string name="ADD_CREDIT">Fund Agent Account</string>
     <string name="you_have_no_agent">You have no registered agent.</string>
+    <string name="only_two_against">Only two numbers are allowed for 2 against.</string>
+    <string name="only_three_against">Only three numbers are allowed for  against.</string>
+    <string name="only_four_against">Only four numbers are allowed for 4 against.</string>
+    <string name="only_five_against">Only five numbers are allowed for 5 against.</string>
+    <string name="complete_cancel">Please continue to pay for game or cancel the game. Thanks.</string>
+    <string name="message">Message</string>
 </resources>

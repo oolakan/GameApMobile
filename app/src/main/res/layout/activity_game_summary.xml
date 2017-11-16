@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mygame.mygame.game.GameSummaryActivity">
+    android:background="@drawable/transparent_bg"
+    tools:context="com.example.mygame.mygame.game.GameSummaryActivity"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
@@ -30,13 +32,53 @@
         android:layout_marginTop="3dp"
         android:layout_below="@+id/tool_bar"
         android:layout_marginBottom="3dp"/>
-
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="3dp"
+        android:background="@color/white"
+        card_view:cardCornerRadius="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/progressbar">
+    <LinearLayout
+        android:id="@+id/serial_no_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="start|center"
+            android:gravity="start|center"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="@string/serial_no" />
+        <TextView
+            android:id="@+id/serial_no"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_gravity="start|center"
+            android:gravity="start|center"
+            android:textStyle="normal"
+            android:text="adsasdjhads"
+            android:textColor="@color/primaryDark"
+            android:textSize="15sp" />
+    </LinearLayout>
+    </android.support.v7.widget.CardView>
     <ListView
         android:id="@+id/transactions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/buttonLayout"
-        android:layout_below="@+id/progressbar"
+        android:layout_below="@+id/card_view"
         android:layout_margin="5dp"
         android:background="@drawable/transparent_bg"
         android:divider="@color/transparent"
@@ -49,14 +91,58 @@
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        >
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="3dp"
+            android:background="@color/white"
+            card_view:cardCornerRadius="0dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:text="@string/total_amount" />
+            <TextView
+                android:id="@+id/total_amount"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"
+                android:textStyle="normal"
+                android:text="adsasdjhads"
+                android:textColor="@color/primaryDark"
+                android:textSize="15sp" />
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
         <Button
             android:id="@+id/cancel_game"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:typeface="normal"
             android:text="@string/cancel"
             android:textColor="@color/white"
@@ -70,12 +156,12 @@
         <Button
             android:id="@+id/proceedToPay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:typeface="normal"
             android:text="@string/pay_now"
             android:textColor="@color/primaryDark"
             android:layout_weight="1"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:textSize="20sp"
             android:textAllCaps="false"
             android:background="@drawable/background_colorprimary"
@@ -84,18 +170,19 @@
         <Button
             android:id="@+id/printGame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:typeface="normal"
             android:text="@string/print_ticket"
             android:textColor="@color/primaryDark"
             android:layout_weight="1"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:textSize="20sp"
             android:visibility="gone"
             android:textAllCaps="false"
             android:background="@drawable/background_colorprimary"
             android:layout_gravity="center"
             android:gravity="center"/>
+    </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

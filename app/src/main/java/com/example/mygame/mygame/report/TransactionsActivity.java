@@ -99,16 +99,27 @@ public class TransactionsActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
+                    searchResult.clear();
                     for (int index = 0; index < transactionArrayList.size(); index++) {
-                        if (TextUtils.equals(transactionArrayList.get(index).getSerialNo(), gameSearchBox.getText().toString().trim())) {
+                        if (transactionArrayList.get(index).getSerialNo().contains(gameSearchBox.getText().toString().trim())) {
                             Transaction transaction = new Transaction();
+
                             transaction.setTicketId(transactionArrayList.get(index).getTicketId());
                             transaction.setUnitStake(transactionArrayList.get(index).getUnitStake());
                             transaction.setTotalAmount(transactionArrayList.get(index).getTotalAmount());
                             transaction.setGame_no_played(transactionArrayList.get(index).getGame_no_played());
+                            transaction.setGame_names_id(transactionArrayList.get(index).getGame_names_id());
+                            transaction.setGame_types_id(transactionArrayList.get(index).getGame_types_id());
+                            transaction.setGame_type_options_id(transactionArrayList.get(index).getGame_type_options_id());
                             transaction.setTime_played(transactionArrayList.get(index).getTime_played());
+                            transaction.setDate_played(transactionArrayList.get(index).getDate_played());
                             transaction.setSerialNo(transactionArrayList.get(index).getSerialNo());
+                            transaction.setGameName(transactionArrayList.get(index).getGameName());
+                            transaction.setGameType(transactionArrayList.get(index).getGameType());
+                            transaction.setGameTypeOption(transactionArrayList.get(index).getGameTypeOption());
                             transaction.setPayment_option(transactionArrayList.get(index).getPayment_option());
+                            transaction.setStatus(transactionArrayList.get(index).getStatus());
+
                             searchResult.add(transaction);
                         }
                     }
@@ -121,10 +132,8 @@ public class TransactionsActivity extends AppCompatActivity {
                     listView.setAdapter(adapter);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
 

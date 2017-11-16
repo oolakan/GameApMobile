@@ -28,19 +28,20 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
 	}
 	@SuppressLint({ "InflateParams", "ViewHolder" })
 	@Override
-	public View getView(int position, View view, ViewGroup parent){
+	public View getView(int position, View view, ViewGroup parent) {
+
 		LayoutInflater inflater=context.getLayoutInflater();
 		View rowView=inflater.inflate(R.layout.transaction_item, null,true);
-		TextView gameNoPlayed = (TextView)rowView.findViewById(R.id.game_no_played);
-        TextView gameName = (TextView)rowView.findViewById(R.id.game_name);
-        TextView gameType = (TextView)rowView.findViewById(R.id.game_type);
-        TextView gameTypeOption = (TextView)rowView.findViewById(R.id.game_type_option);
-		TextView serialNo = (TextView)rowView.findViewById(R.id.serial_no);
-		TextView ticketId = (TextView)rowView.findViewById(R.id.ticket_id);
-		TextView unitStake = (TextView)rowView.findViewById(R.id.unit_stake);
-		TextView totalAmount = (TextView)rowView.findViewById(R.id.total_amount);
-		TextView datePlayed = (TextView) rowView.findViewById(R.id.date_played);
-		TextView paymentOption = (TextView) rowView.findViewById(R.id.payment_option);
+		TextView gameNoPlayed = rowView.findViewById(R.id.game_no_played);
+        TextView gameName = rowView.findViewById(R.id.game_name);
+        TextView gameType = rowView.findViewById(R.id.game_type);
+        TextView gameTypeOption = rowView.findViewById(R.id.game_type_option);
+		TextView serialNo = rowView.findViewById(R.id.serial_no);
+		TextView ticketId = rowView.findViewById(R.id.ticket_id);
+		TextView unitStake = rowView.findViewById(R.id.unit_stake);
+		TextView totalAmount = rowView.findViewById(R.id.total_amount);
+		TextView datePlayed = rowView.findViewById(R.id.date_played);
+		TextView paymentOption = rowView.findViewById(R.id.payment_option);
 		TextView gameResult = rowView.findViewById(R.id.game_result);
 
 		String timePlayed[] = this.transactions.get(position).getTime_played().split(":");
@@ -48,10 +49,11 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
 		String mm = timePlayed[1];
         String s;
         String gameTimePlayed = "";
-        if(hr>=12){
-            gameTimePlayed = String.format("%s:%sPM",(hr-12),mm);
-        }else{
-            gameTimePlayed = String.format("%s:%sAM", hr, mm);
+        if ( hr >= 12 ) {
+            gameTimePlayed = String.format("%s:%sPM",(hr - 12), mm );
+        }
+        else {
+            gameTimePlayed = String.format( "%s:%sAM", hr, mm );
         }
 		try {
             gameNoPlayed.setText(this.transactions.get(position).getGame_no_played());
@@ -74,6 +76,7 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
                 gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.yellow, null));
             }
             else {
+                gameResult.setText(Constants.PENDING);
                 gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.yellow, null));
             }
         }
