@@ -262,6 +262,7 @@ public class WinningGameActivity extends AppCompatActivity {
                         transaction.setGameTypeOption(transactionLists.getJSONObject(i).getJSONObject(Constants.GAME_TYPE_OPTION).getString(Constants.NAME));
                         transaction.setPayment_option(transactionLists.getJSONObject(i).getString(Constants.PAYMENT_OPTION));
                         transaction.setStatus(transactionLists.getJSONObject(i).getString(Constants.STATUS));
+                        transaction.setWinningAmount(transactionLists.getJSONObject(i).getString(Constants.WINNING_AMOUNT));
                         transactionArrayList.add(transaction);
                     }
                     Log.e("TransactionList", transactionArrayList.toString());

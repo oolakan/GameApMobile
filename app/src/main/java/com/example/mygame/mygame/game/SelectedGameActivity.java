@@ -426,22 +426,27 @@ public class SelectedGameActivity extends AppCompatActivity implements  customBu
 
     private HashMap<String, String> computeAgainst(int unitStake, int noOfSelectedFigure, String gameTypeOption) {
         double totalAmountToBeStaked = 0.0;
+        String gameNumberSelected =   gameNoSelectedTextBox.getText().toString().trim();
+        String[] gameNos = gameNumberSelected.split(",");
+
+        String gameAgainstNo = againstNo.getText().toString().trim();
+        String[] gameAgNo = gameAgainstNo.split(",");
         HashMap<String, String> resultOfComputation = new HashMap<String, String>();
         if (noOfSelectedFigure != 0) {
             if (TextUtils.equals(gameTypeOption, getString(R.string.against1))) {
-                lines = noOfSelectedFigure * 1;
+                lines = gameNos.length * 1;
             }
             else if (TextUtils.equals(gameTypeOption, getString(R.string.against2))) {
-                lines = noOfSelectedFigure * 2;
+                lines = gameNos.length * 2;
             }
             else if (TextUtils.equals(gameTypeOption, getString(R.string.against3))) {
-                lines = noOfSelectedFigure * 3;
+                lines = gameNos.length * 3;
             }
             else if (TextUtils.equals(gameTypeOption, getString(R.string.against4))) {
-                lines = noOfSelectedFigure * 5;
+                lines = gameNos.length * 4;
             }
             else if (TextUtils.equals(gameTypeOption, getString(R.string.against5))) {
-                lines = noOfSelectedFigure * 5;
+                lines = gameNos.length * 5;
             }
             totalAmountToBeStaked = lines * unitStake;
             resultOfComputation.put(Constants.LINES, String.format("%s", lines));

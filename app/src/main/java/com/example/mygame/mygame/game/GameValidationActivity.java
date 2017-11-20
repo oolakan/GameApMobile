@@ -140,6 +140,7 @@ public class GameValidationActivity extends AppCompatActivity {
                     transaction.setGameName(transactionResult.getJSONObject(Constants.GAME_NAME).getString(Constants.NAME));
                     transaction.setGameType(transactionResult.getJSONObject(Constants.GAME_TYPE).getString(Constants.NAME));
                     transaction.setStatus(transactionResult.getString(Constants.STATUS));
+                    transaction.setWinningAmount(transactionResult.getString(Constants.WINNING_AMOUNT));
                     transaction.setGameTypeOption(transactionResult.getJSONObject(Constants.GAME_TYPE_OPTION).getString(Constants.NAME));
                     transaction.setPayment_option(transactionResult.getString(Constants.PAYMENT_OPTION));
                     transactionArrayList.add(transaction);

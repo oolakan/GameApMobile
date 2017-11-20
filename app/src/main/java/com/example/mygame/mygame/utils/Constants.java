@@ -1,4 +1,7 @@
 package com.example.mygame.mygame.utils;
+
+import java.util.UUID;
+
 public final class Constants {
 
     public static final String EMPTY = "";
@@ -110,4 +113,5 @@ public final class Constants {
 
     public static final String APPROVED = "APPROVED";
 
+    public static final String SERIAL_UUID = "00001101-0000-1000-8000-00805f9b34fb";
 }

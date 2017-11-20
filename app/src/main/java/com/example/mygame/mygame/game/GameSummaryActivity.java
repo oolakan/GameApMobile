@@ -1,11 +1,16 @@
 package com.example.mygame.mygame.game;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -38,13 +43,31 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
 
 import com.example.mygame.mygame.model.DBController;
 import com.example.mygame.mygame.model.Transaction;
 import com.example.mygame.mygame.utils.Constants;
 
 public class GameSummaryActivity extends AppCompatActivity {
+
+    // android built in classes for bluetooth operations
+    BluetoothAdapter mBluetoothAdapter;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+
+    OutputStream mmOutputStream;
+    InputStream mmInputStream;
+    Thread workerThread;
+
+    byte[] readBuffer;
+    int readBufferPosition;
+    int counter;
+    volatile boolean stopWorker;
 
     private ListView listView;
     private ArrayList<Transaction> transactions = new ArrayList<>();
@@ -55,10 +78,12 @@ public class GameSummaryActivity extends AppCompatActivity {
     private GameTransactionsCustomList adapter;
 
     private ProgressBar progressBar;
-    private Button cancelGameBtn, proceedToPayBtn, printGameTicket;
+    private Button cancelGameBtn, proceedToPayBtn, printGameTicket, openB;
 
     private double totalAmount;
     private TextView serialNoView, totalAmountView;
+
+    private String printedData = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +101,21 @@ public class GameSummaryActivity extends AppCompatActivity {
             }
         });
         getViews();
+        //get bluetooth
+        try {
+            findBT();
+            closeBT();
+            openBT();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         dbController = new DBController(this);
         try {
+            printedData = Constants.EMPTY; // reinitialize print data variable
             transactionLists = dbController.getTransactions();
             // set serial number
             serialNoView.setText(transactionLists.getJSONObject(0).getString(Constants.SERIAL_NO));
+            printedData += String.format("\n          %s\n\n%s %s\n\n", getString(R.string.app_name), getString(R.string.serial_no),transactionLists.getJSONObject(0).getString(Constants.SERIAL_NO));
             Log.e("Transactions", transactionLists.toString());
             totalAmount = 0.0;
             for (int i = 0; i < transactionLists.length(); i++) {
@@ -102,7 +137,30 @@ public class GameSummaryActivity extends AppCompatActivity {
                 transaction.setStatus(Constants.PENDING);
                 transactionArrayList.add(transaction);
                 totalAmount += Double.parseDouble(transactionLists.getJSONObject(i).getString(Constants.TOTAL_AMOUNT));
+
+                String timePlayed[] =  transactionLists.getJSONObject(i).getString(Constants.TIME_PLAYED).split(":");
+                int hr = Integer.parseInt(timePlayed[0]);
+                String mm = timePlayed[1];
+                String gameTimePlayed = "";
+                if ( hr >= 12 ) {
+                    gameTimePlayed = String.format("%s:%sPM",(hr - 12), mm );
+                }
+                else {
+                    gameTimePlayed = String.format( "%s:%sAM", hr, mm );
+                }
+                // getData for printing
+                printedData += String.format("%s: %s\n%s: %s\n%s: %s\n%s: %s\n%s %s\n%s %s\n%s %s\n\n",
+                        getString(R.string.game_nos), transactionLists.getJSONObject(i).getString(Constants.GAME_NO_PLAYED),
+                        getString(R.string.game_name), transactionLists.getJSONObject(i).getString(Constants.GAME_NAME),
+                        getString(R.string.game_type_option), transactionLists.getJSONObject(i).getString(Constants.GAME_TYPE_OPTION),
+                        getString(R.string.unit_stake), transactionLists.getJSONObject(i).getString(Constants.UNIT_STAKE),
+                        getString(R.string.total_amount), transactionLists.getJSONObject(i).getString(Constants.TOTAL_AMOUNT),
+                        getString(R.string.ticket_id), transactionLists.getJSONObject(i).getString(Constants.TICKET_ID),
+                        getString(R.string.date_played), transactionLists.getJSONObject(i).getString(Constants.DATE_PLAYED) + ","
+                                + gameTimePlayed);
             }
+            printedData += String.format("%s: %s\n\n%s\n\n\n\n", getString(R.string.total_amount_paid), totalAmount,
+                    getString(R.string.greetings));
             totalAmountView.setText(String.format("N%s", totalAmount));
             Log.e("TransactionList", transactionArrayList.toString());
             adapter = new GameTransactionsCustomList(GameSummaryActivity.this, transactionArrayList);
@@ -136,6 +194,8 @@ public class GameSummaryActivity extends AppCompatActivity {
                 printTicket();
             }
         });
+
+
     }
 
     private void getViews() {
@@ -297,12 +357,6 @@ public class GameSummaryActivity extends AppCompatActivity {
                 printTicket();
             }
         });
-//        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                dialogInterface.cancel();
-//            }
-//        });
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -323,8 +377,11 @@ public class GameSummaryActivity extends AppCompatActivity {
 
 
     private void printTicket() {
-        startActivity(new Intent(GameSummaryActivity.this, PrintResultActivity.class));
-        finish();
+        try {
+            sendData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showBar() {
@@ -403,5 +460,176 @@ public class GameSummaryActivity extends AppCompatActivity {
     public void onBackPressed() {
         String message = getString(R.string.complete_cancel);
         showAlertDialog(message);
+    }
+
+    // bluetooth printer
+
+
+    // This will find a bluetooth printer device
+    void findBT() {
+
+        try {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+            if (mBluetoothAdapter == null) {
+                Toast.makeText(getApplicationContext(), "No bluetooth adapter available", Toast.LENGTH_SHORT).show();
+            }
+
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(
+                        BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, 0);
+            }
+
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+                    .getBondedDevices();
+            if (pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+
+                    // MP300 is the name of the bluetooth printer device
+                    if (device.getName().equals(getString(R.string.gblackberry))) {
+                        mmDevice = device;
+                        Log.e("Printer name", device.getName());
+                        break;
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Tries to open a connection to the bluetooth printer device
+    void openBT() throws IOException {
+        try {
+            // Standard SerialPortService ID
+            UUID uuid = UUID.fromString(Constants.SERIAL_UUID);
+            mmSocket =  createBluetoothSocket(mmDevice, uuid);// mmDevice.createRfcommSocketToServiceRecord(uuid);
+            mmSocket.connect();
+
+            mmOutputStream = mmSocket.getOutputStream();
+
+            mmInputStream = mmSocket.getInputStream();
+
+            beginListenForData();
+            Log.e( "Bluetooth status", "Bluetooth Opened");
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device, UUID uuid)
+            throws IOException {
+        if(Build.VERSION.SDK_INT >= 10){
+            try {
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                return (BluetoothSocket) m.invoke(device, uuid);
+            } catch (Exception e) {
+                Log.e("Exception", "Could not create Insecure RFComm Connection",e);
+            }
+        }
+        return  device.createRfcommSocketToServiceRecord(uuid);
+    }
+    // After opening a connection to bluetooth printer device,
+// we have to listen and check if a data were sent to be printed.
+    void beginListenForData() {
+        try {
+            final Handler handler = new Handler();
+
+            // This is the ASCII code for a newline character
+            final byte delimiter = 10;
+
+            stopWorker = false;
+            readBufferPosition = 0;
+            readBuffer = new byte[1024];
+
+            workerThread = new Thread(new Runnable() {
+                public void run() {
+                    while (!Thread.currentThread().isInterrupted()
+                            && !stopWorker) {
+
+                        try {
+
+                            int bytesAvailable = mmInputStream.available();
+                            if (bytesAvailable > 0) {
+                                byte[] packetBytes = new byte[bytesAvailable];
+                                mmInputStream.read(packetBytes);
+                                for (int i = 0; i < bytesAvailable; i++) {
+                                    byte b = packetBytes[i];
+                                    if (b == delimiter) {
+                                        byte[] encodedBytes = new byte[readBufferPosition];
+                                        System.arraycopy(readBuffer, 0,
+                                                encodedBytes, 0,
+                                                encodedBytes.length);
+                                        final String data = new String(
+                                                encodedBytes, "US-ASCII");
+                                        readBufferPosition = 0;
+
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                Log.e("data",data);
+                                            }
+                                        });
+                                    } else {
+                                        readBuffer[readBufferPosition++] = b;
+                                    }
+                                }
+                            }
+
+                        } catch (IOException ex) {
+                            stopWorker = true;
+                        }
+
+                    }
+                }
+            });
+
+            workerThread.start();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * This will send data to be printed by the bluetooth printer
+     */
+    void sendData() throws IOException {
+        try {
+            // the text typed by the user
+            String msg = printedData;
+            msg += "\n";
+            mmOutputStream.write(msg.getBytes());
+            // tell the user data were sent
+            Log.e("Data sent", "Data sent");
+            startActivity(new Intent(GameSummaryActivity.this, PrintResultActivity.class));
+            finish();
+        }catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Close the connection to bluetooth printer.
+    void closeBT() throws IOException {
+        try {
+            stopWorker = true;
+            if (mmOutputStream != null) {
+                mmOutputStream.close();
+                mmInputStream.close();
+                mmSocket.close();
+            }
+           Log.e("Bluetooth status" , "Bluetooth Closed");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

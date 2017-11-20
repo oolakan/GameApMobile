@@ -502,4 +502,13 @@
     <string name="only_five_against">Only five numbers are allowed for 5 against.</string>
     <string name="complete_cancel">Please continue to pay for game or cancel the game. Thanks.</string>
     <string name="message">Message</string>
+    <string name="winning_amount">Winning Amount:</string>
+    <string name="bluetooth_closed">Bluetooth closed</string>
+    <string name="data_sent">Data sent.</string>
+    <string name="bluethooth_opened">Bluethooth opened.</string>
+    <string name="bluetooth_device_found">Bluetooth device found.</string>
+    <string name="no_bluetooth_found">No bluetooth adapter available</string>
+    <string name="gblackberry">BlueTooth Printer</string>
+    <string name="greetings">Thanks for your patronage.</string>
+    <string name="total_amount_paid">Total amount played</string>
 </resources>

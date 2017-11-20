@@ -182,6 +182,7 @@
             android:background="@drawable/background_colorprimary"
             android:layout_gravity="center"
             android:gravity="center"/>
+
     </LinearLayout>
     </LinearLayout>
 

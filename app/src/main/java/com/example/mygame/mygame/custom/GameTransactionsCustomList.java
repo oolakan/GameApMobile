@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
 		TextView datePlayed = rowView.findViewById(R.id.date_played);
 		TextView paymentOption = rowView.findViewById(R.id.payment_option);
 		TextView gameResult = rowView.findViewById(R.id.game_result);
+        TextView winningAmount = rowView.findViewById(R.id.winning_amount);
+        LinearLayout winningAmountLayout = rowView.findViewById(R.id.winning_amount_layout);
+
 
 		String timePlayed[] = this.transactions.get(position).getTime_played().split(":");
 		int hr = Integer.parseInt(timePlayed[0]);
@@ -67,6 +71,10 @@ public class GameTransactionsCustomList extends ArrayAdapter<Transaction> {
             datePlayed.setText(String.format("%s, %s", this.transactions.get(position).getDate_played(), gameTimePlayed));
             paymentOption.setText(this.transactions.get(position).getPayment_option());
             gameResult.setText(this.transactions.get(position).getStatus());
+            winningAmount.setText(String.format("%.2f",Double.parseDouble(this.transactions.get(position).getWinningAmount())));
+            if (TextUtils.equals(this.transactions.get(position).getWinningAmount(), Constants.WON)) {
+                winningAmountLayout.setVisibility(View.VISIBLE);
+            }
             if (TextUtils.equals(this.transactions.get(position).getStatus(), Constants.WON)) {
                 gameResult.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.green, null));
             } else if(TextUtils.equals(this.transactions.get(position).getStatus(), Constants.LOOSE)){
